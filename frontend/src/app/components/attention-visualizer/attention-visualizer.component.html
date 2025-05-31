@@ -7,7 +7,6 @@
     (mouseleave)="onPathHoverEnd()"
     (mousemove)="trackMousePosition($event)"
   >
-    <!-- Attention curves (drawn first so they appear behind tokens) -->
     <g class="attention-paths-group">
       <path
         *ngFor="let pathData of attentionPaths; let i = index"
@@ -27,12 +26,10 @@
         pointer-events="all"
         style="vector-effect: non-scaling-stroke;"
       >
-        <!-- Add invisible companion path with larger stroke for easier hover target -->
         <title>{{ formatScore(pathData.score) }}</title>
       </path>
     </g>
 
-    <!-- Optional: Row divider lines -->
     <g class="row-dividers" *ngIf="numRows > 1 && wrapLines">
       <line
         *ngFor="let i of getRowDividers()"
@@ -46,7 +43,6 @@
       />
     </g>
 
-    <!-- Token backgrounds -->
     <g class="token-backgrounds-group">
       <rect
         *ngFor="let pos of tokenPositions; let i = index"
@@ -66,7 +62,6 @@
       ></rect>
     </g>
 
-    <!-- Token text -->
     <g class="token-text-group">
       <text
         *ngFor="let pos of tokenPositions; let i = index"
@@ -86,7 +81,6 @@
       </text>
     </g>
 
-    <!-- Row indicators -->
     <g class="row-indicators" *ngIf="numRows > 1 && wrapLines">
       <text
         *ngFor="let i of getRowNumbers()"
@@ -98,7 +92,6 @@
       </text>
     </g>
 
-    <!-- Weight tooltip display -->
     <foreignObject
       *ngIf="hoveredPathIndex !== null && lockedTokenIndex !== null"
       [attr.x]="mouseX + tooltipOffsetX"
@@ -121,7 +114,6 @@
     </foreignObject>
   </svg>
 
-  <!-- Legend - Always present but content changes -->
   <div class="legend">
     <ng-container *ngIf="hoveredTokenIndex !== null">
       <div class="legend-item">
