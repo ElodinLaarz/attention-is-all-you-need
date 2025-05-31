@@ -8,13 +8,7 @@ import {
   PredictionResponse,
 } from '../../services/api.service';
 import { Subject, Subscription, Observable, of } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  switchMap,
-  finalize,
-  tap,
-} from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, finalize, tap } from 'rxjs/operators';
 import { AttentionVisualizerComponent } from '../attention-visualizer/attention-visualizer.component';
 
 // Material Design modules
@@ -43,17 +37,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class TextAnalyzerComponent implements OnInit, OnDestroy {
   // Text input form control
-  inputControl: FormControl<string> = new FormControl(
-    'Hello world how are you',
-    { nonNullable: true },
-  );
+  inputControl: FormControl<string> = new FormControl('Hello world how are you', {
+    nonNullable: true,
+  });
   public hoveredTokenIndex: number | null = null; // Property to pass to visualizer
   public lockedTokenIndex: number | null = null; // Property to track locked token
 
   // Token prediction state
   isAddingTokens: boolean = false;
   isAutocompleting: boolean = false;
-  private autocompleteInterval: any = null;
+  private autocompleteInterval: ReturnType<typeof setInterval> | null = null;
   private readonly AUTOCOMPLETE_DELAY_MS: number = 1000; // 1 second delay
 
   // Subject to emit input changes
@@ -110,7 +103,7 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
           return this.apiService
             .getPrediction(payload)
             .pipe(finalize(() => (this.isLoadingPrediction = false)));
-        }),
+        })
       )
       .subscribe({
         next: (response: PredictionResponse | never[]) => {
@@ -123,8 +116,9 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
             }
           }
         },
-        error: (err: any) => {
-          this.errorMessage = err?.message ?? 'Failed to fetch prediction.';
+        error: (err: unknown) => {
+          const errorObj = err as { message?: string };
+          this.errorMessage = errorObj?.message ?? 'Failed to fetch prediction.';
           console.error(err);
           this.isLoadingPrediction = false;
 
@@ -166,8 +160,9 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
           this.attentionTokens = response.tokens;
           this.attentionMatrix = response.attention_matrix;
         },
-        error: (err: any) => {
-          this.errorMessage = err?.message ?? 'Failed to fetch attention data.';
+        error: (err: unknown) => {
+          const errorObj = err as { message?: string };
+          this.errorMessage = errorObj?.message ?? 'Failed to fetch attention data.';
           console.error(err);
         },
       });
@@ -259,7 +254,7 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
   changeMatrixPage(increment: number): void {
     this.currentMatrixPage = Math.max(
       0,
-      Math.min(this.matrixPageCount - 1, this.currentMatrixPage + increment),
+      Math.min(this.matrixPageCount - 1, this.currentMatrixPage + increment)
     );
   }
 
@@ -278,24 +273,16 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
     if (!this.attentionTokens || this.attentionTokens.length === 0) return [];
 
     const startIndex = this.currentMatrixPage * this.matrixColumnsPerPage;
-    const endIndex = Math.min(
-      startIndex + this.matrixColumnsPerPage,
-      this.attentionTokens.length,
-    );
+    const endIndex = Math.min(startIndex + this.matrixColumnsPerPage, this.attentionTokens.length);
 
-    return Array.from(
-      { length: endIndex - startIndex },
-      (_, i) => startIndex + i,
-    );
+    return Array.from({ length: endIndex - startIndex }, (_, i) => startIndex + i);
   }
 
   /**
    * Get the tokens for columns to display on the current page
    */
   getVisibleColumnTokens(): string[] {
-    return this.getVisibleColumnIndices().map(
-      (index) => this.attentionTokens[index],
-    );
+    return this.getVisibleColumnIndices().map((index) => this.attentionTokens[index]);
   }
 
   /**
@@ -322,8 +309,7 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
 
     // Add the predicted token to the current text
     const currentText = this.inputControl.value;
-    const newText =
-      currentText + (currentText.endsWith(' ') ? '' : ' ') + this.predictedWord;
+    const newText = currentText + (currentText.endsWith(' ') ? '' : ' ') + this.predictedWord;
 
     // Store autocomplete state
     const wasAutocompleting = this.isAutocompleting;

@@ -27,12 +27,7 @@ $attention-bg-low: rgba(226, 232, 240, 0.5); // Light slate
 $attention-text-low: #475569; // Slate 600
 
 // Gradients
-$gradient-primary: linear-gradient(
-  135deg,
-  #f8fafc 0%,
-  #f1f5f9 50%,
-  #f8f7ff 100%
-);
+$gradient-primary: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #f8f7ff 100%);
 $gradient-accent: linear-gradient(
   135deg,
   rgba(79, 70, 229, 0.08) 0%,
@@ -76,7 +71,7 @@ $spacing-xl: 32px;
 
 // === Mixins ===
 @mixin mono-text {
-  font-family: "JetBrains Mono", "Fira Code", "Roboto Mono", monospace;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Roboto Mono', monospace;
 }
 
 @mixin smooth-transition($duration: 0.3s) {
@@ -104,7 +99,7 @@ $spacing-xl: 32px;
   max-width: 1200px;
   margin: 0 auto;
   padding: $spacing-xl;
-  font-family: "Inter", "Roboto", sans-serif;
+  font-family: 'Inter', 'Roboto', sans-serif;
   background: $gradient-primary;
   min-height: 100vh;
 
@@ -258,7 +253,7 @@ $spacing-xl: 32px;
       font-size: 0.95rem;
 
       &::before {
-        content: "⚠️ ";
+        content: '⚠️ ';
         margin-right: $spacing-sm;
       }
     }
@@ -272,17 +267,13 @@ $spacing-xl: 32px;
     overflow: hidden;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       top: 0;
       right: 0;
       width: 100px;
       height: 100px;
-      background: radial-gradient(
-        circle,
-        rgba($accent-color, 0.1),
-        transparent
-      );
+      background: radial-gradient(circle, rgba($accent-color, 0.1), transparent);
       border-radius: 50%;
       transform: translate(50%, -50%);
     }
@@ -377,7 +368,7 @@ $spacing-xl: 32px;
       font-weight: 500;
       text-align: right;
       border-right: 1px solid #e5e7eb;
-      font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", monospace;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
       font-size: 13px;
       color: #1f2937;
       background: #f9fafb;
@@ -404,7 +395,7 @@ $spacing-xl: 32px;
       padding: 8px 10px;
       text-align: center;
       border-right: 1px solid #e5e7eb;
-      font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", monospace;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
       font-size: 13px;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -413,13 +404,13 @@ $spacing-xl: 32px;
         border-right: none;
       }
 
-      &[data-attention="high"] {
+      &[data-attention='high'] {
         background-color: rgba(79, 70, 229, 0.1);
         color: #4338ca;
         font-weight: 500;
       }
 
-      &[data-attention="medium"] {
+      &[data-attention='medium'] {
         background-color: rgba(79, 70, 229, 0.05);
         color: #4f46e5;
       }
@@ -540,7 +531,7 @@ $spacing-xl: 32px;
         cursor: pointer;
         user-select: none;
 
-        input[type="checkbox"] {
+        input[type='checkbox'] {
           width: 16px;
           height: 16px;
           cursor: pointer;
@@ -681,19 +672,19 @@ $spacing-xl: 32px;
         background: $dark-background-secondary;
         border-color: $dark-border-light;
 
-        &[data-attention="high"] {
+        &[data-attention='high'] {
           background: $dark-attention-bg-high;
           color: $dark-attention-text-high;
           border-color: rgba($dark-attention-text-high, 0.3);
         }
 
-        &[data-attention="medium"] {
+        &[data-attention='medium'] {
           background: $dark-attention-bg-medium;
           color: $dark-attention-text-medium;
           border-color: rgba($dark-attention-text-medium, 0.3);
         }
 
-        &[data-attention="low"] {
+        &[data-attention='low'] {
           background: $dark-attention-bg-low;
           color: $dark-attention-text-low;
         }
@@ -809,8 +800,7 @@ $spacing-xl: 32px;
         text-align: center;
         font-weight: 500;
         border-right: 1px solid #e5e7eb;
-        font-family:
-          "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", monospace;
+        font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', monospace;
         font-size: 13px;
         color: #1f2937;
         cursor: pointer;

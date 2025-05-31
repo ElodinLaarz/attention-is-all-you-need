@@ -32,27 +32,32 @@ export class ApiService {
     console.error('API Error:', error);
 
     const clientSideError: boolean = error.error instanceof ErrorEvent;
-    const serverErrorBody: any = error.error;
+    const serverErrorBody: unknown = error.error;
     const statusCode: number = error.status;
 
-    let errorMessage: string =
-      'Something bad happened; please try again later.';
+    let errorMessage: string = 'Something bad happened; please try again later.';
 
     switch (true) {
       case clientSideError:
-        errorMessage = `An error occurred: ${serverErrorBody.message}`;
+        if (
+          typeof serverErrorBody === 'object' &&
+          serverErrorBody !== null &&
+          'message' in serverErrorBody
+        ) {
+          errorMessage = `An error occurred: ${(serverErrorBody as { message: string }).message}`;
+        } else {
+          errorMessage = 'An unknown client-side error occurred.';
+        }
         break;
 
-      case !!serverErrorBody &&
-        typeof serverErrorBody === 'object' &&
+      case typeof serverErrorBody === 'object' &&
+        serverErrorBody !== null &&
         'error' in serverErrorBody:
-        errorMessage = `Error from server: ${serverErrorBody.error}`;
+        errorMessage = `Error from server: ${(serverErrorBody as { error: string }).error}`;
         break;
 
       case !!statusCode:
-        errorMessage = `Server returned code ${statusCode}, error message: ${
-          error.message
-        }`;
+        errorMessage = `Server returned code ${statusCode}, error message: ${error.message}`;
         break;
 
       default:

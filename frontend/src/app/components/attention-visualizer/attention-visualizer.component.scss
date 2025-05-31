@@ -4,7 +4,7 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
-  transition: height 0.3s ease; // Add smooth content transitions
+  transition: all 0.3s ease; // Add smooth content transitions
 
   .attention-svg {
     display: block;
@@ -32,7 +32,7 @@
     font-size: 14px;
     color: #4f46e5;
 
-    input[type="checkbox"] {
+    input[type='checkbox'] {
       appearance: none;
       width: 16px;
       height: 16px;
@@ -44,7 +44,7 @@
         background-color: #4f46e5;
 
         &:after {
-          content: "✓";
+          content: '✓';
           color: white;
           position: absolute;
           top: -2px;
@@ -88,7 +88,7 @@
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
-    "Segoe UI",
+    'Segoe UI',
     Roboto,
     sans-serif;
 }
@@ -118,8 +118,7 @@
 
 .token-text {
   font-family:
-    "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New",
-    monospace;
+    'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
   font-size: 14px;
   font-weight: 500;
   fill: #374151;
@@ -141,16 +140,29 @@
 
 // Attention path styling
 .attention-path {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  cursor: pointer; // Add cursor to indicate paths are interactive
+  pointer-events: all; // Enhanced hit area for better hover detection
+  stroke-linecap: round;
+  stroke-linejoin: round;
 
   &.highlighted {
-    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
+    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6));
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
   &:not(.highlighted) {
-    stroke-dasharray: 2, 2;
+    stroke-dasharray: 4, 6; // Larger gaps between dashes for better visibility
+  }
+
+  &.hovered {
+    filter: drop-shadow(
+      0 0 12px rgba(239, 68, 68, 0.9)
+    ); // Enhanced shadow for hovered outgoing paths
+    stroke-dasharray: none; // Remove dashing when hovered
+    stroke-width: 6px !important; // Make hovered paths much thicker for better visibility
+    z-index: 20; // Bring hovered path to front
   }
 }
 
@@ -160,13 +172,57 @@
     stroke-dashoffset: 0;
   }
   100% {
-    stroke-dashoffset: 20;
+    stroke-dashoffset: 40; // Value must match the sum of the dash and gap in stroke-dasharray for perfect looping
   }
 }
 
 .attention-path.highlighted {
-  animation: attention-flow 2s linear infinite;
-  stroke-dasharray: 10, 5;
+  animation: attention-flow 1s linear infinite; // Linear timing for smooth loop
+  stroke-dasharray:
+    15, 25; // Larger blobs with more space between them (sum is 40, matching dashoffset)
+
+  &.hovered {
+    animation: none; // Stop animation when hovered for better readability
+    stroke-dasharray: none;
+  }
+}
+
+// Tooltip for attention weight
+.attention-weight-tooltip {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #3b82f6;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: #1e40af;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  pointer-events: none; // Allow interaction with elements beneath
+  animation: fadeIn 0.15s ease;
+  transition: opacity 0.15s ease-out;
+  max-width: 100%;
+
+  strong {
+    font-weight: 700;
+    color: #2563eb;
+    font-size: 14px;
+  }
+
+  .tooltip-detail {
+    font-size: 12px;
+    color: #4b5563;
+    margin-left: 10px;
+    font-style: italic;
+  }
 }
 
 // Legend styling
@@ -195,15 +251,18 @@
       border-radius: 3px;
 
       &.outgoing {
-        background: #3b82f6; // Blue for outgoing
+        background: #f08080; // Pastel red (LightCoral) for outgoing
         height: 8px; // Slightly thicker
-        box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+        box-shadow: 0 0 4px rgba(240, 128, 128, 0.7); // Reddish shadow
       }
 
       &.incoming {
-        background: #6b7280; // Gray for incoming
+        background: #3b82f6; // Blue-500 for incoming
+        // Keep existing dashed border style for differentiation, or add shadow if preferred
         border-top: 1px dashed rgba(255, 255, 255, 0.5);
         border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0 4px rgba(59, 130, 246, 0.5); // Blueish shadow
+        height: 8px; // Match height with outgoing for consistency
       }
     }
   }
@@ -224,11 +283,20 @@
   }
 
   .legend-note,
-  .legend-layout {
+  .legend-layout,
+  .legend-hover-hint {
     font-size: 11px;
     color: #64748b;
     margin-top: 5px;
     line-height: 1.4;
+  }
+
+  .legend-hover-hint {
+    color: #4f46e5;
+    background-color: rgba(79, 70, 229, 0.05);
+    padding: 4px 8px;
+    border-radius: 4px;
+    animation: fadeIn 0.2s ease;
   }
 
   .legend-status {
@@ -257,6 +325,24 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.weight-tooltip {
+  animation: fadeIn 0.15s ease;
+  transition: opacity 0.15s ease-out;
+
+  &.fade-out {
+    animation: fadeOut 0.15s ease forwards;
   }
 }
 

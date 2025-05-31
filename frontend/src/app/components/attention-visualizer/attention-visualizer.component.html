@@ -4,19 +4,32 @@
     [attr.width]="svgWidth"
     [attr.height]="svgHeight"
     class="attention-svg"
+    (mouseleave)="onPathHoverEnd()"
+    (mousemove)="trackMousePosition($event)"
   >
     <!-- Attention curves (drawn first so they appear behind tokens) -->
     <g class="attention-paths-group">
       <path
-        *ngFor="let pathData of attentionPaths"
+        *ngFor="let pathData of attentionPaths; let i = index"
         [attr.d]="pathData.path"
-        [ngClass]="getPathClasses(pathData.isHighlighted)"
-        [style.stroke]="getStrokeColor(pathData.isHighlighted)"
-        [style.stroke-width]="getMaxValue(pathData.score * 8, 0.5)"
-        [style.opacity]="getMaxValue(pathData.score * 0.8 + 0.2, 0.3)"
+        [ngClass]="getPathClasses(pathData.isHighlighted, pathData.isHovered)"
+        [style.stroke]="getStrokeColor(pathData.isHighlighted, pathData.isHovered, pathData.isOutgoing)"
+        [style.stroke-width]="getMaxValue(pathData.score * 15, 3) * (pathData.isHovered ? 1.5 : 1)"
+        [style.opacity]="getMaxValue(pathData.score * 0.8 + 0.2, 0.5) * (pathData.isHovered ? 1 : 1)"
         fill="none"
         stroke-linecap="round"
-      ></path>
+        (mouseenter)="onPathHover(i)"
+        (mouseleave)="onPathHoverEnd()"
+        (mouseout)="onPathHoverEnd()"
+        [attr.data-from-token]="tokens[pathData.fromIndex]"
+        [attr.data-to-token]="tokens[pathData.toIndex]"
+        [attr.data-score]="formatScore(pathData.score)"
+        pointer-events="all"
+        style="vector-effect: non-scaling-stroke;"
+      >
+        <!-- Add invisible companion path with larger stroke for easier hover target -->
+        <title>{{ formatScore(pathData.score) }}</title>
+      </path>
     </g>
 
     <!-- Optional: Row divider lines -->
@@ -85,29 +98,27 @@
       </text>
     </g>
 
-    <!-- Optional: Add arrows to show direction -->
-    <defs>
-      <marker
-        id="arrowhead"
-        markerWidth="10"
-        markerHeight="7"
-        refX="9"
-        refY="3.5"
-        orient="auto"
-      >
-        <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" opacity="0.7" />
-      </marker>
-      <marker
-        id="arrowhead-gray"
-        markerWidth="10"
-        markerHeight="7"
-        refX="9"
-        refY="3.5"
-        orient="auto"
-      >
-        <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280" opacity="0.5" />
-      </marker>
-    </defs>
+    <!-- Weight tooltip display -->
+    <foreignObject
+      *ngIf="hoveredPathIndex !== null && lockedTokenIndex !== null"
+      [attr.x]="mouseX + tooltipOffsetX"
+      [attr.y]="mouseY + tooltipOffsetY"
+      [attr.width]="tooltipWidth"
+      [attr.height]="tooltipHeight"
+      class="attention-weight-tooltip-container"
+    >
+      <div xmlns="http://www.w3.org/1999/xhtml" class="attention-weight-tooltip">
+        <div>
+          <strong>From:</strong> {{ hoveredPathToToken }}
+        </div>
+        <div>
+          <strong>To:</strong> {{ hoveredPathFromToken }}
+        </div>
+        <div>
+          <strong>Score:</strong> {{ formatScore(hoveredPathScore!) }}
+        </div>
+      </div>
+    </foreignObject>
   </svg>
 
   <!-- Legend - Always present but content changes -->
@@ -126,6 +137,9 @@
           ><strong>Token "{{ tokens[lockedTokenIndex] }}" is locked.</strong>
           Click again to unlock.</small
         >
+      </div>
+      <div class="legend-hover-hint" *ngIf="lockedTokenIndex !== null">
+        <small>Hover over an attention line to see its exact weight. <strong>Lines are easier to hover over when they're moving.</strong></small>
       </div>
     </ng-container>
 
