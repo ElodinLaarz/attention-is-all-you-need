@@ -522,6 +522,37 @@ $spacing-xl: 32px;
       align-items: center;
       gap: 8px;
 
+      // Layer slider specific styling
+      &:has(mat-slider) {
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 200px;
+
+        .control-label {
+          font-weight: 500;
+          margin-bottom: 5px;
+
+          small {
+            display: block;
+            font-weight: normal;
+            font-size: 11px;
+            color: $text-muted;
+            margin-top: 2px;
+            line-height: 1.3;
+          }
+        }
+
+        mat-slider {
+          width: 100%;
+
+          .mat-mdc-slider {
+            --mdc-slider-active-track-color: #{$primary-color};
+            --mdc-slider-inactive-track-color: #{$border-medium};
+            --mdc-slider-handle-color: #{$primary-color};
+          }
+        }
+      }
+
       .control-label {
         font-size: 14px;
         color: #4b5563;
@@ -715,9 +746,43 @@ $spacing-xl: 32px;
         align-items: center;
         gap: 8px;
 
+        // Layer slider specific styling
+        &:has(mat-slider) {
+          flex-direction: column;
+          align-items: flex-start;
+          min-width: 200px;
+
+          .control-label {
+            font-weight: 500;
+            margin-bottom: 5px;
+          }
+
+          mat-slider {
+            width: 100%;
+
+            .mat-mdc-slider {
+              --mdc-slider-active-track-color: #{$primary-color};
+              --mdc-slider-inactive-track-color: #{$border-medium};
+              --mdc-slider-handle-color: #{$primary-color};
+            }
+          }
+        }
+
         .control-label {
           font-size: 14px;
           color: #4b5563;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          cursor: pointer;
+          user-select: none;
+
+          input[type='checkbox'] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #4f46e5;
+          }
         }
 
         select {
@@ -727,6 +792,13 @@ $spacing-xl: 32px;
           background-color: white;
           color: #4b5563;
           font-size: 14px;
+          cursor: pointer;
+
+          &:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+          }
         }
       }
 

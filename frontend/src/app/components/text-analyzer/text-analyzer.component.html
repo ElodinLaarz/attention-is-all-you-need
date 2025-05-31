@@ -57,7 +57,7 @@
     <button
       mat-raised-button
       (click)="analyzeTextAttention()"
-      [disabled]="isLoadingAttention || !inputControl.value?.trim()"
+      [disabled]="isLoadingAttention || !inputControl.value.trim()"
     >
       <mat-spinner
         *ngIf="isLoadingAttention"
@@ -91,6 +91,20 @@
 
     <!-- Visualization Controls -->
     <div class="visualization-controls">
+      <div class="control-group" *ngIf="numLayers > 1">
+        <label class="control-label">
+          Attention Layer: {{ currentLayer + 1 }} / {{ numLayers }}
+          <small>(Lower layers learn basic patterns, higher layers learn complex relationships)</small>
+        </label>
+        <mat-slider
+          min="0"
+          [max]="numLayers - 1"
+          step="1"
+          discrete
+        >
+          <input matSliderThumb [value]="currentLayer" (valueChange)="onLayerChange($event)">
+        </mat-slider>
+      </div>
       <div class="control-group">
         <label class="control-label">
           <input
@@ -118,7 +132,7 @@
 
     <app-attention-visualizer
       [tokens]="attentionTokens"
-      [attentionMatrix]="attentionMatrix"
+      [attentionMatrix]="currentAttentionMatrix"
       [hoveredTokenIndex]="hoveredTokenIndex"
       [lockedTokenIndex]="lockedTokenIndex"
       [maxTokensPerLine]="maxTokensPerLine"
@@ -199,7 +213,7 @@
 
           <!-- Matrix Rows -->
           <div
-            *ngFor="let row of attentionMatrix; let i = index"
+            *ngFor="let row of currentAttentionMatrix; let i = index"
             class="matrix-row"
             (mouseenter)="onTokenHover(i)"
             (mouseleave)="onTokenHover(null)"

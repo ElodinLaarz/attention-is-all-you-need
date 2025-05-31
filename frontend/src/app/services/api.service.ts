@@ -11,7 +11,8 @@ export interface TextInput {
 
 export interface AttentionResponse {
   tokens: string[];
-  attention_matrix: number[][];
+  attention_layers: number[][][];
+  num_layers: number;
   error?: string;
 }
 

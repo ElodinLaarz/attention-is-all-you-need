@@ -17,6 +17,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-text-analyzer',
@@ -30,6 +32,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    MatSliderModule,
+    MatCardModule,
     AttentionVisualizerComponent,
   ],
   templateUrl: './text-analyzer.component.html',
@@ -57,7 +61,17 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
 
   // Attention data
   attentionTokens: string[] = [];
-  attentionMatrix: number[][] = [];
+  attentionLayers: number[][][] = [];
+  currentLayer: number = 0;
+  numLayers: number = 0;
+
+  // Current layer's attention matrix for the visualizer
+  get currentAttentionMatrix(): number[][] {
+    if (this.attentionLayers.length === 0 || this.currentLayer >= this.attentionLayers.length) {
+      return [];
+    }
+    return this.attentionLayers[this.currentLayer];
+  }
 
   // Visualizer configuration
   maxTokensPerLine: number = 10;
@@ -158,7 +172,10 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: AttentionResponse) => {
           this.attentionTokens = response.tokens;
-          this.attentionMatrix = response.attention_matrix;
+          this.attentionLayers = response.attention_layers;
+          this.numLayers = response.num_layers;
+          this.currentLayer = Math.max(0, this.numLayers - 1); // Default to last layer
+          this.errorMessage = null;
         },
         error: (err: unknown) => {
           const errorObj = err as { message?: string };
@@ -181,7 +198,9 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
     this.isLoadingAttention = true;
     this.errorMessage = null;
     this.attentionTokens = [];
-    this.attentionMatrix = [];
+    this.attentionLayers = [];
+    this.numLayers = 0;
+    this.currentLayer = 0;
     this.currentMatrixPage = 0; // Reset to first page
 
     // Stop autocomplete when analyzing new text
@@ -246,6 +265,13 @@ export class TextAnalyzerComponent implements OnInit, OnDestroy {
     const select = event.target as HTMLSelectElement;
     this.matrixColumnsPerPage = parseInt(select.value, 10);
     this.currentMatrixPage = 0; // Reset to first page
+  }
+
+  /**
+   * Handle changing the attention layer to visualize
+   */
+  onLayerChange(value: number): void {
+    this.currentLayer = value;
   }
 
   /**

@@ -11,6 +11,7 @@ import torch
 from torch import Tensor
 
 # === Constants ===
+# Or gpt2-large, etc.
 MODEL_NAME: str = "gpt2"
 MAX_NEW_TOKENS: int = 5
 NUM_RETURN_SEQUENCES: int = 1
@@ -132,13 +133,16 @@ def get_attention_transformer() -> Union[Response, Tuple[Response, int]]:
     if len(attentions) == 0:
         return jsonify({"error": "No attention layers available"}), 500
 
-    last_layer_attentions = attentions[-1]
-    if last_layer_attentions is None:
-        return jsonify({"error": "No attention data in last layer"}), 500
+    # Process all layers instead of just the last one
+    all_layers_attention: list[list[list[float]]] = []
+    for layer_idx, layer_attention in enumerate(attentions):
+        if layer_attention is None:
+            continue
 
-    averaged_attentions = last_layer_attentions.squeeze(0).mean(dim=0)
-
-    attention_matrix: list[list[float]] = averaged_attentions.tolist()
+        # Average across heads for this layer
+        averaged_layer_attention = layer_attention.squeeze(0).mean(dim=0)
+        attention_matrix: list[list[float]] = averaged_layer_attention.tolist()
+        all_layers_attention.append(attention_matrix)
 
     # Convert input_ids tensor to list for token decoding
     try:
@@ -153,7 +157,8 @@ def get_attention_transformer() -> Union[Response, Tuple[Response, int]]:
     return jsonify(
         {
             "tokens": tokens,
-            "attention_matrix": attention_matrix,
+            "attention_layers": all_layers_attention,
+            "num_layers": len(all_layers_attention),
         }
     )
 
