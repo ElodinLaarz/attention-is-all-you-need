@@ -1,0 +1,13 @@
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { TextAnalyzerComponent } from './components/text-analyzer/text-analyzer.component';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet, TextAnalyzerComponent],
+  templateUrl: './app.html',
+  styleUrl: './app.scss',
+})
+export class App {
+  protected title = 'frontend';
+}
