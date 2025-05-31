@@ -1,13 +1,14 @@
 from typing import Any, Optional, Tuple, Union, cast
-from flask import Flask, request, jsonify, make_response, Response
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
-    PreTrainedTokenizer,
-    PreTrainedModel,
 )
+from transformers.modeling_utils import PreTrainedModel
+from transformers.tokenization_utils import PreTrainedTokenizer
 import torch
+from torch import Tensor
 
 # === Constants ===
 MODEL_NAME: str = "gpt2"
@@ -31,15 +32,23 @@ ROUTE_ATTENTION: str = "/attention/transformer"
 app: Flask = Flask(__name__)
 CORS(app)
 
+# Initialize as Optional types since they may be None if loading fails
+tokenizer: Optional[PreTrainedTokenizer] = None
+model: Optional[PreTrainedModel] = None
+
 try:
-    tokenizer: PreTrainedTokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    model: PreTrainedModel = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
 
-    if tokenizer.pad_token is None:
+    if tokenizer is not None and tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-        model.config.pad_token_id = model.config.eos_token_id
+        if model is not None and hasattr(model, "config"):
+            config = getattr(model, "config", None)
+            if config is not None and hasattr(config, "eos_token_id"):
+                config.pad_token_id = config.eos_token_id
 
-    model.eval()
+    if model is not None:
+        model.eval()
     print(f"Model '{MODEL_NAME}' loaded successfully.")
 
 except Exception as e:
@@ -59,7 +68,10 @@ def get_text() -> Union[str, Tuple[Response, int]]:
 
 
 @app.route(ROUTE_PREDICT, methods=["POST"])
-def predict_transformer() -> Response:
+def predict_transformer() -> Union[Response, Tuple[Response, int]]:
+    if tokenizer is None or model is None:
+        return jsonify({"error": ERROR_MODEL_NOT_LOADED}), 500
+
     input_text_or_error: Union[str, Tuple[Response, int]] = get_text()
     if isinstance(input_text_or_error, tuple):
         return input_text_or_error[0], input_text_or_error[1]
@@ -67,25 +79,33 @@ def predict_transformer() -> Response:
     input_text: str = input_text_or_error
     inputs = tokenizer(input_text, return_tensors="pt")
 
-    output_sequences = model.generate(
-        inputs["input_ids"],
-        max_new_tokens=MAX_NEW_TOKENS,
-        num_return_sequences=NUM_RETURN_SEQUENCES,
-        pad_token_id=tokenizer.pad_token_id,
-    )
+    try:
+        output_sequences = model.generate(
+            inputs["input_ids"],
+            max_new_tokens=MAX_NEW_TOKENS,
+            num_return_sequences=NUM_RETURN_SEQUENCES,
+            pad_token_id=tokenizer.pad_token_id,
+        )
 
-    generated_text: str = tokenizer.decode(
-        output_sequences[0], skip_special_tokens=True
-    )
+        generated_text: str = tokenizer.decode(
+            output_sequences[0], skip_special_tokens=True
+        )
 
-    next_words: str = generated_text[len(input_text) :].strip()
-    predicted_next_word: str = next_words.split(" ")[0] if next_words else ""
+        next_words: str = generated_text[len(input_text) :].strip()
+        predicted_next_word: str = next_words.split(" ")[0] if next_words else ""
 
-    return jsonify({"predicted_next_word": predicted_next_word})
+        return jsonify({"predicted_next_word": predicted_next_word})
+
+    except Exception as e:
+        print(f"Error during text generation: {e}")
+        return jsonify({"error": "Text generation failed"}), 500
 
 
 @app.route(ROUTE_ATTENTION, methods=["POST"])
-def get_attention_transformer() -> Response:
+def get_attention_transformer() -> Union[Response, Tuple[Response, int]]:
+    if tokenizer is None or model is None:
+        return jsonify({"error": ERROR_MODEL_NOT_LOADED}), 500
+
     input_text_or_error: Union[str, Tuple[Response, int]] = get_text()
     if isinstance(input_text_or_error, tuple):
         return input_text_or_error[0], input_text_or_error[1]
@@ -97,17 +117,38 @@ def get_attention_transformer() -> Response:
         print(f"Error: 'input_ids' not present in tokenizer return {inputs}.")
         return jsonify({"error": ERROR_TOKENIZER_OUTPUT}), 500
 
-    input_ids = inputs["input_ids"]
+    input_ids: Optional[Tensor] = inputs.get("input_ids")
+    if input_ids is None:
+        return jsonify({"error": ERROR_TOKENIZER_OUTPUT}), 500
 
     with torch.no_grad():
         outputs = model(input_ids, output_attentions=True)
 
+    # Handle potential None outputs
+    if not hasattr(outputs, "attentions") or outputs.attentions is None:
+        return jsonify({"error": "No attention data available"}), 500
+
     attentions = outputs.attentions
+    if len(attentions) == 0:
+        return jsonify({"error": "No attention layers available"}), 500
+
     last_layer_attentions = attentions[-1]
+    if last_layer_attentions is None:
+        return jsonify({"error": "No attention data in last layer"}), 500
+
     averaged_attentions = last_layer_attentions.squeeze(0).mean(dim=0)
 
     attention_matrix: list[list[float]] = averaged_attentions.tolist()
-    tokens: list[str] = [tokenizer.decode([token_id]) for token_id in input_ids[0]]
+
+    # Convert input_ids tensor to list for token decoding
+    try:
+        input_ids_list: list[int] = input_ids[0].tolist()
+        tokens: list[str] = [
+            tokenizer.decode([token_id]) for token_id in input_ids_list
+        ]
+    except Exception as e:
+        print(f"Error processing tokens: {e}")
+        return jsonify({"error": "Token processing failed"}), 500
 
     return jsonify(
         {
