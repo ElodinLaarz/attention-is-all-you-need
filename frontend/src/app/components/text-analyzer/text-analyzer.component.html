@@ -6,18 +6,30 @@
       <mat-label>Enter text</mat-label>
       <textarea
         matInput
+        #inputArea
         cdkTextareaAutosize
         #autosize="cdkTextareaAutosize"
         cdkAutosizeMinRows="3"
         cdkAutosizeMaxRows="10"
         [formControl]="inputControl"
         (input)="onInputChange($event)"
-        placeholder="Type something... the prediction will update automatically"
+        placeholder="Type something..."
       ></textarea>
-      <mat-hint align="end" *ngIf="isLoadingPrediction">Predicting...</mat-hint>
     </mat-form-field>
+    <span
+      class="ghost-prediction"
+      *ngIf="
+        predictedWord && !isLoadingPrediction && inputControl.value?.trim()
+      "
+    >
+      {{ predictedWord }}
+    </span>
+    <mat-hint
+      *ngIf="isLoadingPrediction && !errorMessage"
+      class="predicting-hint"
+      >Predicting...</mat-hint
+    >
   </div>
-
   <div class="button-section">
     <button
       mat-raised-button
@@ -25,60 +37,23 @@
       (click)="analyzeTextAttention()"
       [disabled]="isLoadingAttention || !inputControl.value?.trim()"
     >
-      <mat-icon *ngIf="isLoadingAttention">
-        <mat-spinner diameter="20"></mat-spinner>
-      </mat-icon>
+      <mat-spinner
+        *ngIf="isLoadingAttention"
+        diameter="20"
+        style="display: inline-block; margin-right: 8px"
+      ></mat-spinner>
       {{ isLoadingAttention ? "Analyzing..." : "Analyze Attention" }}
     </button>
   </div>
 
-  <div *ngIf="errorMessage" class="error-section">
-    <p>Error: {{ errorMessage }}</p>
-  </div>
-
-  <div *ngIf="predictedWord && !isLoadingPrediction" class="prediction-section">
-    <h3>Next Word Prediction:</h3>
+  <div
+    *ngIf="predictedWord && !isLoadingPrediction && !inputControl.value?.trim()"
+    class="prediction-section"
+    style="display: none"
+  >
+    <h3>Next Word Prediction (Old):</h3>
     <p>
       <strong>{{ predictedWord }}</strong>
     </p>
-  </div>
-
-  <div
-    *ngIf="attentionTokens.length > 0 && !isLoadingAttention"
-    class="attention-section"
-  >
-    <h3>Attention Analysis:</h3>
-
-    <h4>Tokens:</h4>
-    <div class="tokens-display">
-      <pre>{{ attentionTokens | json }}</pre>
-    </div>
-
-    <h4>Attention Matrix:</h4>
-    <div class="attention-matrix">
-      <div
-        *ngFor="let row of attentionMatrix; let i = index"
-        class="matrix-row"
-      >
-        <span class="token-label">{{ attentionTokens[i] }}</span>
-        <span
-          *ngFor="let score of row; let j = index"
-          class="attention-score"
-          [class.high-attention]="score > 0.1"
-          [class.medium-attention]="score > 0.05 && score <= 0.1"
-          [class.low-attention]="score <= 0.05"
-          [title]="
-            'Attention from ' +
-            attentionTokens[i] +
-            ' to ' +
-            attentionTokens[j] +
-            ': ' +
-            (score | number: '1.4-4')
-          "
-        >
-          {{ score | number: "1.2-4" }}
-        </span>
-      </div>
-    </div>
   </div>
 </div>

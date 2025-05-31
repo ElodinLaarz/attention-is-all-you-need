@@ -132,26 +132,25 @@ $spacing-xl: 32px;
   }
 
   .input-section {
-    margin-bottom: $spacing-lg;
-
+    position: relative; // Needed if you want to absolutely position the ghost text later
+    margin-bottom: 10px; // Adjust spacing
     mat-form-field {
       width: 100%;
+    }
 
-      textarea {
-        @include mono-text;
-        font-size: 14px;
-        line-height: 1.6;
-        resize: vertical;
-        min-height: 100px;
-        color: $text-primary;
-      }
-
-      mat-hint {
-        color: $secondary-color;
-        font-style: italic;
-        font-weight: 500;
-        animation: pulse 2s ease-in-out infinite;
-      }
+    .ghost-prediction {
+      display: inline-block; // Or block, depending on desired flow
+      margin-left: 5px; // Space it slightly from the textarea
+      color: #9e9e9e; // Grey color for ghost text
+      font-style: italic;
+      // If textarea and ghost text are on the same line, ensure vertical alignment
+      // vertical-align: top; // If mat-form-field and span are display: inline-block or similar
+    }
+    .predicting-hint {
+      display: block; // Ensure hint takes its own line or position as needed
+      text-align: right;
+      font-size: 0.85em;
+      color: #757575;
     }
   }
 
