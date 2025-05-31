@@ -62,7 +62,6 @@ def get_text() -> Union[str, Tuple[Response, int]]:
 def predict_transformer() -> Response:
     input_text_or_error: Union[str, Tuple[Response, int]] = get_text()
     if isinstance(input_text_or_error, tuple):
-        print(f"itoe[0] {input_text_or_error[0]} itoe[1] {input_text_or_error[1]}")
         return input_text_or_error[0], input_text_or_error[1]
 
     input_text: str = input_text_or_error
@@ -82,7 +81,6 @@ def predict_transformer() -> Response:
     next_words: str = generated_text[len(input_text) :].strip()
     predicted_next_word: str = next_words.split(" ")[0] if next_words else ""
 
-    print(f"Returning {predicted_next_word}")
     return jsonify({"predicted_next_word": predicted_next_word})
 
 
@@ -111,7 +109,6 @@ def get_attention_transformer() -> Response:
     attention_matrix: list[list[float]] = averaged_attentions.tolist()
     tokens: list[str] = [tokenizer.decode([token_id]) for token_id in input_ids[0]]
 
-    print(f"returning tokens: {tokens} and attention_matrix {attention_matrix}")
     return jsonify(
         {
             "tokens": tokens,
