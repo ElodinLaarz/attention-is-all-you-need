@@ -60,17 +60,70 @@ export class AttentionVisualizerComponent implements OnChanges {
   public svgHeight: number = 200;
   public numRows: number = 1; // Track number of rows for dynamic height
 
+  // Layout and positioning constants
   private readonly MIN_TOKEN_WIDTH: number = 60;
   private readonly TOKEN_PADDING: number = 20;
   private readonly TOKEN_Y_BASE: number = 80; // Base Y position for first row
   private readonly ROW_HEIGHT: number = 120; // Height between rows
   private readonly CURVE_HEIGHT_BASE: number = 80; // Base height for attention curves
+  private readonly START_PADDING: number = 40; // Starting X padding for tokens
+  private readonly TOKEN_GAP: number = 10; // Gap between tokens
+  private readonly TOKEN_HEIGHT_OFFSET: number = 25; // Offset from token center for path start/end
+  private readonly SVG_PADDING: number = 40; // Padding around SVG content
+  private readonly MIN_SVG_WIDTH: number = 400; // Minimum SVG width
+  private readonly MIN_SVG_HEIGHT: number = 200; // Minimum SVG height
+  private readonly SVG_HEIGHT_PADDING: number = 50; // Extra padding for SVG height calculation
+
+  // Attention thresholds and limits
+  private readonly ALL_ATTENTION_THRESHOLD: number = 0.02; // Threshold for showing attention in overview mode
+  private readonly FOCUSED_ATTENTION_THRESHOLD: number = 0.01; // Threshold for focused token attention
+  private readonly TOP_ATTENTION_LIMIT: number = 5; // Maximum number of attention connections to show
+  private readonly INCOMING_ATTENTION_DIMMING: number = 0.6; // Factor to dim incoming attention paths
+
+  // Curve and path styling constants
+  private readonly CURVE_DISTANCE_FACTOR: number = 0.15; // Factor for curve height based on distance
+  private readonly MAX_CURVE_HEIGHT: number = 100; // Maximum height for same-row curves
+  private readonly INTER_ROW_CONTROL_OFFSET: number = 60; // Control point offset for inter-row paths
+  private readonly INTER_ROW_HEIGHT_OFFSET: number = 50; // Height offset for inter-row control points
+  private readonly DISTANT_ROW_HEIGHT_FACTOR: number = 50; // Height factor for distant row paths
 
   // Tooltip configuration constants
   public readonly tooltipWidth: number = 200; // Width of the tooltip <foreignObject>
   public readonly tooltipHeight: number = 60; // Height of the tooltip <foreignObject>
   public readonly tooltipOffsetX: number = 10; // X offset for tooltip from mouseX
   public readonly tooltipOffsetY: number = 20; // Y offset for tooltip from mouseY
+
+  // Timing constants
+  private readonly HOVER_END_TIMEOUT: number = 50; // Timeout for hover end to prevent flickering
+
+  // Font and text constants
+  private readonly CANVAS_FONT: string = '14px monospace'; // Font for text measurement
+
+  // HTML template constants
+  public readonly STROKE_WIDTH_MULTIPLIER: number = 15; // Multiplier for path stroke width
+  public readonly MIN_STROKE_WIDTH: number = 3; // Minimum stroke width for paths
+  public readonly HOVER_STROKE_MULTIPLIER: number = 1.5; // Multiplier for hovered stroke width
+  public readonly OPACITY_MULTIPLIER: number = 0.8; // Multiplier for path opacity
+  public readonly OPACITY_OFFSET: number = 0.2; // Base opacity offset
+  public readonly MIN_OPACITY: number = 0.5; // Minimum opacity for paths
+  public readonly TOKEN_RECT_HEIGHT: number = 30; // Height of token background rectangles
+  public readonly TOKEN_RECT_Y_OFFSET: number = 20; // Y offset for token rectangles
+  public readonly TOKEN_TEXT_Y_OFFSET: number = 5; // Y offset for token text
+  public readonly TOKEN_BORDER_RADIUS: number = 4; // Border radius for token rectangles
+  public readonly ROW_DIVIDER_PADDING: number = 20; // Padding for row divider lines
+  public readonly ROW_LABEL_Y_OFFSET: number = 45; // Y offset for row labels
+
+  // SCSS-related constants (exposed for potential future dynamic styling)
+  public readonly VISUALIZER_PADDING: number = 20; // Container padding
+  public readonly VISUALIZER_BORDER_RADIUS: number = 8; // Container border radius
+  public readonly SVG_BORDER_RADIUS: number = 6; // SVG border radius
+  public readonly SVG_MARGIN_TOP: number = 10; // SVG top margin
+  public readonly CONTROLS_GAP: number = 20; // Gap between control elements
+  public readonly CONTROLS_MARGIN_BOTTOM: number = 10; // Controls bottom margin
+  public readonly LEGEND_MARGIN_TOP: number = 15; // Legend top margin
+  public readonly LEGEND_PADDING: number = 10; // Legend padding
+  public readonly LEGEND_MIN_HEIGHT: number = 100; // Legend minimum height
+  public readonly LEGEND_ITEM_GAP: number = 8; // Gap between legend items
 
   constructor() {}
 
@@ -128,9 +181,9 @@ export class AttentionVisualizerComponent implements OnChanges {
   private calculateTokenPositions(): void {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d')!;
-    context.font = '14px monospace'; // Match your CSS font
+    context.font = this.CANVAS_FONT; // Use constant instead of hardcoded font
 
-    let currentX = 40; // Start padding
+    let currentX = this.START_PADDING; // Use constant instead of hardcoded 40
     let currentRow = 0;
     let maxRowWidth = 0; // Track the widest row
     this.tokenPositions = [];
@@ -143,7 +196,7 @@ export class AttentionVisualizerComponent implements OnChanges {
       if (this.wrapLines && index > 0 && index % this.maxTokensPerLine === 0) {
         // Start a new row
         maxRowWidth = Math.max(maxRowWidth, currentX);
-        currentX = 40; // Reset X position
+        currentX = this.START_PADDING; // Use constant instead of hardcoded 40
         currentRow++; // Move to next row
       }
 
@@ -157,7 +210,7 @@ export class AttentionVisualizerComponent implements OnChanges {
         row: currentRow,
       });
 
-      currentX += tokenWidth + 10; // 10px gap between tokens
+      currentX += tokenWidth + this.TOKEN_GAP; // Use constant instead of hardcoded 10
     });
 
     // Update number of rows
@@ -165,8 +218,11 @@ export class AttentionVisualizerComponent implements OnChanges {
 
     // Update SVG dimensions based on content
     maxRowWidth = Math.max(maxRowWidth, currentX);
-    this.svgWidth = Math.max(maxRowWidth + 40, 400);
-    this.svgHeight = Math.max(this.TOKEN_Y_BASE + this.numRows * this.ROW_HEIGHT + 50, 200);
+    this.svgWidth = Math.max(maxRowWidth + this.SVG_PADDING, this.MIN_SVG_WIDTH); // Use constants
+    this.svgHeight = Math.max(
+      this.TOKEN_Y_BASE + this.numRows * this.ROW_HEIGHT + this.SVG_HEIGHT_PADDING,
+      this.MIN_SVG_HEIGHT
+    ); // Use constants
   }
 
   private updateAttentionLines(): void {
@@ -198,8 +254,8 @@ export class AttentionVisualizerComponent implements OnChanges {
 
     this.attentionMatrix.forEach((row, fromIndex) => {
       row.forEach((score, toIndex) => {
-        if (score > 0.02 && fromIndex !== toIndex) {
-          // Lowered threshold to find more candidates
+        if (score > this.ALL_ATTENTION_THRESHOLD && fromIndex !== toIndex) {
+          // Use constant instead of hardcoded 0.02
           allAttentionPairs.push({
             fromIndex,
             toIndex,
@@ -209,8 +265,10 @@ export class AttentionVisualizerComponent implements OnChanges {
       });
     });
 
-    // Sort by score in descending order and take top 5
-    const topAttentionPairs = allAttentionPairs.sort((a, b) => b.score - a.score).slice(0, 5);
+    // Sort by score in descending order and take top connections
+    const topAttentionPairs = allAttentionPairs
+      .sort((a, b) => b.score - a.score)
+      .slice(0, this.TOP_ATTENTION_LIMIT); // Use constant instead of hardcoded 5
 
     // Create paths for top attention pairs
     topAttentionPairs.forEach((pair) => {
@@ -233,15 +291,16 @@ export class AttentionVisualizerComponent implements OnChanges {
     // Draw outgoing attention (from hovered token)
     const outgoingAttention: { toIndex: number; score: number }[] = [];
     this.attentionMatrix[activeTokenIndex].forEach((score, toIndex) => {
-      if (score > 0.01 && activeTokenIndex !== toIndex) {
+      if (score > this.FOCUSED_ATTENTION_THRESHOLD && activeTokenIndex !== toIndex) {
+        // Use constant instead of hardcoded 0.01
         outgoingAttention.push({ toIndex, score });
       }
     });
 
-    // Sort and take top 5 outgoing
+    // Sort and take top outgoing connections
     outgoingAttention
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
+      .slice(0, this.TOP_ATTENTION_LIMIT) // Use constant instead of hardcoded 5
       .forEach((pair) => {
         const path = this.createCurvedPath(activeTokenIndex, pair.toIndex);
         this.attentionPaths.push({
@@ -259,20 +318,21 @@ export class AttentionVisualizerComponent implements OnChanges {
     const incomingAttention: { fromIndex: number; score: number }[] = [];
     this.attentionMatrix.forEach((row, fromIndex) => {
       const score = row[activeTokenIndex];
-      if (score > 0.01 && fromIndex !== activeTokenIndex) {
+      if (score > this.FOCUSED_ATTENTION_THRESHOLD && fromIndex !== activeTokenIndex) {
+        // Use constant instead of hardcoded 0.01
         incomingAttention.push({ fromIndex, score });
       }
     });
 
-    // Sort and take top 5 incoming
+    // Sort and take top incoming connections
     incomingAttention
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
+      .slice(0, this.TOP_ATTENTION_LIMIT) // Use constant instead of hardcoded 5
       .forEach((pair) => {
         const path = this.createCurvedPath(pair.fromIndex, activeTokenIndex);
         this.attentionPaths.push({
           path,
-          score: pair.score * 0.6, // Slightly dimmed for incoming attention
+          score: pair.score * this.INCOMING_ATTENTION_DIMMING, // Use constant instead of hardcoded 0.6
           isHighlighted: true, // Also animate incoming attention paths
           fromIndex: pair.fromIndex,
           toIndex: activeTokenIndex,
@@ -290,9 +350,9 @@ export class AttentionVisualizerComponent implements OnChanges {
     if (!fromPos || !toPos) return '';
 
     const startX = fromPos.x;
-    const startY = fromPos.y - 25; // Start above token
+    const startY = fromPos.y - this.TOKEN_HEIGHT_OFFSET; // Use constant instead of hardcoded 25
     const endX = toPos.x;
-    const endY = toPos.y - 25; // End above token
+    const endY = toPos.y - this.TOKEN_HEIGHT_OFFSET; // Use constant instead of hardcoded 25
 
     // Check if tokens are on different rows
     const sameLine = fromPos.row === toPos.row;
@@ -301,8 +361,11 @@ export class AttentionVisualizerComponent implements OnChanges {
       // For tokens on the same row, use a simple arc
       // Calculate curve parameters
       const distance = Math.abs(endX - startX);
-      // Increase curve height slightly for better visibility and interaction
-      const curveHeight = Math.min(this.CURVE_HEIGHT_BASE + distance * 0.15, 100);
+      // Use constants for curve height calculation
+      const curveHeight = Math.min(
+        this.CURVE_HEIGHT_BASE + distance * this.CURVE_DISTANCE_FACTOR,
+        this.MAX_CURVE_HEIGHT
+      );
 
       // Control points for quadratic Bézier curve
       const midX = (startX + endX) / 2;
@@ -316,19 +379,19 @@ export class AttentionVisualizerComponent implements OnChanges {
       const rowDiff = Math.abs(fromPos.row - toPos.row);
       const isFromAbove = fromPos.row < toPos.row;
 
-      // Increase control point offset for smoother, more pronounced curves
-      const controlOffset = 60; // Increased from 40
+      // Use constants for control point calculations
+      const controlOffset = this.INTER_ROW_CONTROL_OFFSET;
 
       // Calculate control points for cubic Bézier
       const cp1x = startX + (isFromAbove ? controlOffset : -controlOffset);
-      const cp1y = startY - 50; // Increased from 40
+      const cp1y = startY - this.INTER_ROW_HEIGHT_OFFSET;
       const cp2x = endX + (isFromAbove ? -controlOffset : controlOffset);
-      const cp2y = endY - 50; // Increased from 40
+      const cp2y = endY - this.INTER_ROW_HEIGHT_OFFSET;
 
       // For distant rows, create control points that go higher
       if (rowDiff > 1) {
         // Adjust control points for better path visualization
-        const heightFactor = rowDiff * 50; // Increased from 40
+        const heightFactor = rowDiff * this.DISTANT_ROW_HEIGHT_FACTOR;
         return `M ${startX} ${startY} C ${cp1x} ${startY - heightFactor} ${cp2x} ${endY - heightFactor} ${endX} ${endY}`;
       }
 
@@ -406,7 +469,7 @@ export class AttentionVisualizerComponent implements OnChanges {
     this.hoverEndTimeout = setTimeout(() => {
       this.resetPathHoverState();
       this.hoverEndTimeout = null;
-    }, 50); // Small timeout to ensure smoother hover experience
+    }, this.HOVER_END_TIMEOUT); // Use constant instead of hardcoded 50
   }
 
   // Helper method to reset path hover state

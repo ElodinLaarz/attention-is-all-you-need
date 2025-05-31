@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AttentionVisualizer } from './attention-visualizer';
+import { AttentionVisualizerComponent } from './attention-visualizer.component';
 
-describe('AttentionVisualizer', () => {
-  let component: AttentionVisualizer;
-  let fixture: ComponentFixture<AttentionVisualizer>;
+describe('AttentionVisualizerComponent', () => {
+  let component: AttentionVisualizerComponent;
+  let fixture: ComponentFixture<AttentionVisualizerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AttentionVisualizer],
+      imports: [AttentionVisualizerComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AttentionVisualizer);
+    fixture = TestBed.createComponent(AttentionVisualizerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

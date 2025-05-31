@@ -14,8 +14,8 @@
         [attr.d]="pathData.path"
         [ngClass]="getPathClasses(pathData.isHighlighted, pathData.isHovered)"
         [style.stroke]="getStrokeColor(pathData.isHighlighted, pathData.isHovered, pathData.isOutgoing)"
-        [style.stroke-width]="getMaxValue(pathData.score * 15, 3) * (pathData.isHovered ? 1.5 : 1)"
-        [style.opacity]="getMaxValue(pathData.score * 0.8 + 0.2, 0.5) * (pathData.isHovered ? 1 : 1)"
+        [style.stroke-width]="getMaxValue(pathData.score * STROKE_WIDTH_MULTIPLIER, MIN_STROKE_WIDTH) * (pathData.isHovered ? HOVER_STROKE_MULTIPLIER : 1)"
+        [style.opacity]="getMaxValue(pathData.score * OPACITY_MULTIPLIER + OPACITY_OFFSET, MIN_OPACITY) * (pathData.isHovered ? 1 : 1)"
         fill="none"
         stroke-linecap="round"
         (mouseenter)="onPathHover(i)"
@@ -36,9 +36,9 @@
     <g class="row-dividers" *ngIf="numRows > 1 && wrapLines">
       <line
         *ngFor="let i of getRowDividers()"
-        [attr.x1]="20"
+        [attr.x1]="ROW_DIVIDER_PADDING"
         [attr.y1]="tokenYBase + i * rowHeight - rowHeight / 2"
-        [attr.x2]="svgWidth - 20"
+        [attr.x2]="svgWidth - ROW_DIVIDER_PADDING"
         [attr.y2]="tokenYBase + i * rowHeight - rowHeight / 2"
         stroke="#e2e8f0"
         stroke-width="1"
@@ -51,15 +51,15 @@
       <rect
         *ngFor="let pos of tokenPositions; let i = index"
         [attr.x]="pos.x - pos.width / 2"
-        [attr.y]="pos.y - 20"
+        [attr.y]="pos.y - TOKEN_RECT_Y_OFFSET"
         [attr.width]="pos.width"
-        [attr.height]="30"
+        [attr.height]="TOKEN_RECT_HEIGHT"
         [ngClass]="
           'token-background' +
           (hoveredTokenIndex === i ? ' hovered' : '') +
           (lockedTokenIndex === i ? ' locked' : '')
         "
-        rx="4"
+        [attr.rx]="TOKEN_BORDER_RADIUS"
         (mouseenter)="onTokenHover(i)"
         (mouseleave)="onTokenHover(null)"
         (click)="onTokenClick(i)"
@@ -71,7 +71,7 @@
       <text
         *ngFor="let pos of tokenPositions; let i = index"
         [attr.x]="pos.x"
-        [attr.y]="pos.y - 5"
+        [attr.y]="pos.y - TOKEN_TEXT_Y_OFFSET"
         text-anchor="middle"
         [ngClass]="
           'token-text' +
@@ -90,8 +90,8 @@
     <g class="row-indicators" *ngIf="numRows > 1 && wrapLines">
       <text
         *ngFor="let i of getRowNumbers()"
-        [attr.x]="20"
-        [attr.y]="tokenYBase + i * rowHeight - 45"
+        [attr.x]="ROW_DIVIDER_PADDING"
+        [attr.y]="tokenYBase + i * rowHeight - ROW_LABEL_Y_OFFSET"
         class="row-label"
       >
         Row {{ i + 1 }}

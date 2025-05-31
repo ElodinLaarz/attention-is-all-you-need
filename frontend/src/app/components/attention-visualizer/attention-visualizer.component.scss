@@ -1,17 +1,136 @@
+// SCSS Constants - Magic values extracted to variables
+$visualizer-padding: 20px;
+$visualizer-border-radius: 8px;
+$visualizer-bg-color: #fafafa;
+$visualizer-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+$visualizer-transition: all 0.3s ease;
+
+$svg-bg-color: white;
+$svg-border-radius: 6px;
+$svg-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+$svg-margin-top: 10px;
+
+$controls-gap: 20px;
+$controls-margin-bottom: 10px;
+$controls-font-size: 14px;
+$controls-color: #4f46e5;
+
+$checkbox-size: 16px;
+$checkbox-border-width: 2px;
+$checkbox-border-radius: 3px;
+$checkbox-check-font-size: 12px;
+
+$select-padding: 4px 8px;
+$select-border-radius: 4px;
+$select-border-color: #d1d5db;
+$select-focus-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+
+$row-label-font-size: 12px;
+$row-label-color: #6b7280;
+
+$token-bg-default: #f8fafc;
+$token-border-default: #e2e8f0;
+$token-border-width: 1px;
+$token-transition: all 0.2s ease;
+$token-hover-bg: #dbeafe;
+$token-hover-border: #3b82f6;
+$token-hover-border-width: 2px;
+$token-locked-bg: #e0e7ff;
+$token-locked-border: #4f46e5;
+$token-locked-border-width: 2.5px;
+
+$token-text-font-size: 14px;
+$token-text-color: #374151;
+$token-text-hover-color: #1e40af;
+$token-text-locked-color: #4338ca;
+
+$path-transition: all 0.2s ease;
+$path-shadow-highlighted: 0 0 4px rgba(59, 130, 246, 0.6);
+$path-shadow-hovered: 0 0 12px rgba(239, 68, 68, 0.9);
+$path-dash-array: 4, 6;
+$path-hovered-stroke-width: 6px;
+
+$animation-duration: 1s;
+$animation-timing: linear;
+$animation-dash-offset: 40;
+$animation-dash-array: 15, 25;
+
+$tooltip-bg: rgba(255, 255, 255, 0.95);
+$tooltip-border: 2px solid #3b82f6;
+$tooltip-border-radius: 6px;
+$tooltip-padding: 8px 12px;
+$tooltip-font-size: 13px;
+$tooltip-color: #1e40af;
+$tooltip-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+$tooltip-animation-duration: 0.15s;
+$tooltip-detail-font-size: 12px;
+$tooltip-detail-color: #4b5563;
+
+$legend-margin-top: 15px;
+$legend-padding: 10px;
+$legend-bg: #f8fafc;
+$legend-border: 1px solid #e2e8f0;
+$legend-border-radius: 6px;
+$legend-font-size: 13px;
+$legend-gap: 8px;
+$legend-min-height: 100px;
+$legend-color-width: 16px;
+$legend-color-height: 6px;
+$legend-color-border-radius: 3px;
+$legend-outgoing-height: 8px;
+$legend-outgoing-color: #f08080;
+$legend-incoming-color: #3b82f6;
+$legend-incoming-height: 8px;
+$legend-note-font-size: 11px;
+$legend-note-color: #64748b;
+$legend-hint-color: #4f46e5;
+$legend-hint-bg: rgba(79, 70, 229, 0.05);
+$legend-hint-padding: 4px 8px;
+$legend-hint-border-radius: 4px;
+
+// Legend status constants
+$legend-status-margin-top: 8px;
+$legend-status-padding: 6px 10px;
+$legend-status-bg: rgba(79, 70, 229, 0.1);
+$legend-status-border-radius: 4px;
+$legend-status-border-left: 3px solid #4f46e5;
+$legend-status-font-size: 12px;
+$legend-status-color: #4338ca;
+
+// Legend placeholder constants
+$legend-placeholder-height: 52px;
+$legend-placeholder-color: #94a3b8;
+$legend-placeholder-opacity: 0.8;
+
+// Animation constants
+$fade-animation-duration: 0.15s;
+$fade-animation-timing: ease;
+
+// Responsive breakpoints
+$mobile-breakpoint: 768px;
+$mobile-padding: 15px;
+$mobile-token-font: 12px;
+$mobile-legend-font: 12px;
+$mobile-controls-gap: 10px;
+
+// Accessibility constants
+$high-contrast-stroke-width: 2px;
+$high-contrast-path-width: 2px;
+
 .visualizer-container {
-  padding: 20px;
-  background: #fafafa;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: $visualizer-padding;
+  background: $visualizer-bg-color;
+  border-radius: $visualizer-border-radius;
+  box-shadow: $visualizer-box-shadow;
   overflow-x: auto;
-  transition: all 0.3s ease; // Add smooth content transitions
+  transition: $visualizer-transition;
 
   .attention-svg {
     display: block;
-    background: white;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
+    background: $svg-bg-color;
+    border-radius: $svg-border-radius;
+    box-shadow: $svg-box-shadow;
+    margin-top: $svg-margin-top;
   }
 }
 
@@ -20,28 +139,28 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-bottom: 10px;
-  gap: 20px;
+  margin-bottom: $controls-margin-bottom;
+  gap: $controls-gap;
 
   .toggle-wrap {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: $legend-gap;
     cursor: pointer;
     user-select: none;
-    font-size: 14px;
-    color: #4f46e5;
+    font-size: $controls-font-size;
+    color: $controls-color;
 
     input[type='checkbox'] {
       appearance: none;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #4f46e5;
-      border-radius: 3px;
+      width: $checkbox-size;
+      height: $checkbox-size;
+      border: $checkbox-border-width solid $controls-color;
+      border-radius: $checkbox-border-radius;
       position: relative;
 
       &:checked {
-        background-color: #4f46e5;
+        background-color: $controls-color;
 
         &:after {
           content: '✓';
@@ -49,7 +168,7 @@
           position: absolute;
           top: -2px;
           left: 3px;
-          font-size: 12px;
+          font-size: $checkbox-check-font-size;
         }
       }
     }
@@ -58,22 +177,22 @@
   .token-limit-control {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
+    gap: $legend-gap;
+    font-size: $controls-font-size;
     color: #4b5563;
 
     select {
-      padding: 4px 8px;
-      border-radius: 4px;
-      border: 1px solid #d1d5db;
+      padding: $select-padding;
+      border-radius: $select-border-radius;
+      border: 1px solid $select-border-color;
       background-color: white;
-      color: #4f46e5;
-      font-size: 14px;
+      color: $controls-color;
+      font-size: $controls-font-size;
 
       &:focus {
         outline: none;
-        border-color: #4f46e5;
-        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        border-color: $controls-color;
+        box-shadow: $select-focus-shadow;
       }
     }
   }
@@ -81,8 +200,8 @@
 
 // Row indicators
 .row-label {
-  font-size: 12px;
-  fill: #6b7280;
+  font-size: $row-label-font-size;
+  fill: $row-label-color;
   font-weight: 500;
   font-family:
     system-ui,
@@ -95,23 +214,23 @@
 
 // Token styling
 .token-background {
-  fill: #f8fafc;
-  stroke: #e2e8f0;
-  stroke-width: 1;
+  fill: $token-bg-default;
+  stroke: $token-border-default;
+  stroke-width: $token-border-width;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: $token-transition;
 
   &:hover,
   &.hovered {
-    fill: #dbeafe;
-    stroke: #3b82f6;
-    stroke-width: 2;
+    fill: $token-hover-bg;
+    stroke: $token-hover-border;
+    stroke-width: $token-hover-border-width;
   }
 
   &.locked {
-    fill: #e0e7ff; // Indigo 50
-    stroke: #4f46e5; // Indigo 600
-    stroke-width: 2.5;
+    fill: $token-locked-bg;
+    stroke: $token-locked-border;
+    stroke-width: $token-locked-border-width;
     stroke-dasharray: none;
   }
 }
@@ -119,50 +238,48 @@
 .token-text {
   font-family:
     'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-  font-size: 14px;
+  font-size: $token-text-font-size;
   font-weight: 500;
-  fill: #374151;
+  fill: $token-text-color;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: $token-transition;
   user-select: none;
 
   &:hover,
   &.hovered {
-    fill: #1e40af;
+    fill: $token-text-hover-color;
     font-weight: 600;
   }
 
   &.locked {
-    fill: #4338ca; // Indigo 700
+    fill: $token-text-locked-color;
     font-weight: 700;
   }
 }
 
 // Attention path styling
 .attention-path {
-  transition: all 0.2s ease;
-  cursor: pointer; // Add cursor to indicate paths are interactive
-  pointer-events: all; // Enhanced hit area for better hover detection
+  transition: $path-transition;
+  cursor: pointer;
+  pointer-events: all;
   stroke-linecap: round;
   stroke-linejoin: round;
 
   &.highlighted {
-    filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.6));
+    filter: drop-shadow($path-shadow-highlighted);
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
   &:not(.highlighted) {
-    stroke-dasharray: 4, 6; // Larger gaps between dashes for better visibility
+    stroke-dasharray: $path-dash-array;
   }
 
   &.hovered {
-    filter: drop-shadow(
-      0 0 12px rgba(239, 68, 68, 0.9)
-    ); // Enhanced shadow for hovered outgoing paths
-    stroke-dasharray: none; // Remove dashing when hovered
-    stroke-width: 6px !important; // Make hovered paths much thicker for better visibility
-    z-index: 20; // Bring hovered path to front
+    filter: drop-shadow($path-shadow-hovered);
+    stroke-dasharray: none;
+    stroke-width: $path-hovered-stroke-width !important;
+    z-index: 20;
   }
 }
 
@@ -172,33 +289,32 @@
     stroke-dashoffset: 0;
   }
   100% {
-    stroke-dashoffset: 40; // Value must match the sum of the dash and gap in stroke-dasharray for perfect looping
+    stroke-dashoffset: $animation-dash-offset;
   }
 }
 
 .attention-path.highlighted {
-  animation: attention-flow 1s linear infinite; // Linear timing for smooth loop
-  stroke-dasharray:
-    15, 25; // Larger blobs with more space between them (sum is 40, matching dashoffset)
+  animation: attention-flow $animation-duration $animation-timing infinite;
+  stroke-dasharray: $animation-dash-array;
 
   &.hovered {
-    animation: none; // Stop animation when hovered for better readability
+    animation: none;
     stroke-dasharray: none;
   }
 }
 
 // Tooltip for attention weight
 .attention-weight-tooltip {
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #3b82f6;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13px;
-  color: #1e40af;
+  background: $tooltip-bg;
+  border: $tooltip-border;
+  border-radius: $tooltip-border-radius;
+  padding: $tooltip-padding;
+  font-size: $tooltip-font-size;
+  color: $tooltip-color;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: $tooltip-shadow;
   font-family:
     system-ui,
     -apple-system,
@@ -206,20 +322,20 @@
     'Segoe UI',
     Roboto,
     sans-serif;
-  pointer-events: none; // Allow interaction with elements beneath
-  animation: fadeIn 0.15s ease;
-  transition: opacity 0.15s ease-out;
+  pointer-events: none;
+  animation: fadeIn $tooltip-animation-duration ease;
+  transition: opacity $tooltip-animation-duration ease-out;
   max-width: 100%;
 
   strong {
     font-weight: 700;
     color: #2563eb;
-    font-size: 14px;
+    font-size: $token-text-font-size;
   }
 
   .tooltip-detail {
-    font-size: 12px;
-    color: #4b5563;
+    font-size: $tooltip-detail-font-size;
+    color: $tooltip-detail-color;
     margin-left: 10px;
     font-style: italic;
   }
@@ -227,42 +343,41 @@
 
 // Legend styling
 .legend {
-  margin-top: 15px;
-  padding: 10px;
-  background: #f8fafc;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  font-size: 13px;
+  margin-top: $legend-margin-top;
+  padding: $legend-padding;
+  background: $legend-bg;
+  border-radius: $legend-border-radius;
+  border: $legend-border;
+  font-size: $legend-font-size;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-height: 100px; // Set a minimum height to prevent layout shifts
+  gap: $legend-gap;
+  min-height: $legend-min-height;
 
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: $legend-gap;
     animation: fadeIn 0.2s ease;
-    transition: opacity 0.2s ease-in-out; // Ensure legend transitions are smooth
+    transition: opacity 0.2s ease-in-out;
 
     .legend-color {
-      width: 16px;
-      height: 6px;
-      border-radius: 3px;
+      width: $legend-color-width;
+      height: $legend-color-height;
+      border-radius: $legend-color-border-radius;
 
       &.outgoing {
-        background: #f08080; // Pastel red (LightCoral) for outgoing
-        height: 8px; // Slightly thicker
-        box-shadow: 0 0 4px rgba(240, 128, 128, 0.7); // Reddish shadow
+        background: $legend-outgoing-color;
+        height: $legend-outgoing-height;
+        box-shadow: 0 0 4px rgba(240, 128, 128, 0.7);
       }
 
       &.incoming {
-        background: #3b82f6; // Blue-500 for incoming
-        // Keep existing dashed border style for differentiation, or add shadow if preferred
+        background: $legend-incoming-color;
         border-top: 1px dashed rgba(255, 255, 255, 0.5);
         border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
-        box-shadow: 0 0 4px rgba(59, 130, 246, 0.5); // Blueish shadow
-        height: 8px; // Match height with outgoing for consistency
+        box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+        height: $legend-incoming-height;
       }
     }
   }
@@ -271,46 +386,46 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 52px; // Match the height of two legend items
-    color: #94a3b8;
+    height: $legend-placeholder-height;
+    color: $legend-placeholder-color;
     font-style: italic;
     animation: fadeIn 0.2s ease;
-    transition: opacity 0.2s ease-in-out; // Ensure legend transitions are smooth
+    transition: opacity 0.2s ease-in-out;
 
     .placeholder-text {
-      opacity: 0.8;
+      opacity: $legend-placeholder-opacity;
     }
   }
 
   .legend-note,
   .legend-layout,
   .legend-hover-hint {
-    font-size: 11px;
-    color: #64748b;
+    font-size: $legend-note-font-size;
+    color: $legend-note-color;
     margin-top: 5px;
     line-height: 1.4;
   }
 
   .legend-hover-hint {
-    color: #4f46e5;
-    background-color: rgba(79, 70, 229, 0.05);
-    padding: 4px 8px;
-    border-radius: 4px;
+    color: $legend-hint-color;
+    background-color: $legend-hint-bg;
+    padding: $legend-hint-padding;
+    border-radius: $legend-hint-border-radius;
     animation: fadeIn 0.2s ease;
   }
 
   .legend-status {
-    margin-top: 8px;
-    padding: 6px 10px;
-    background: rgba(79, 70, 229, 0.1);
-    border-radius: 4px;
-    border-left: 3px solid #4f46e5;
+    margin-top: $legend-status-margin-top;
+    padding: $legend-status-padding;
+    background: $legend-status-bg;
+    border-radius: $legend-status-border-radius;
+    border-left: $legend-status-border-left;
     animation: fadeIn 0.2s ease;
-    transition: opacity 0.2s ease-in-out; // Ensure legend transitions are smooth
+    transition: opacity 0.2s ease-in-out;
 
     small {
-      color: #4338ca;
-      font-size: 12px;
+      color: $legend-status-color;
+      font-size: $legend-status-font-size;
 
       strong {
         font-weight: 600;
@@ -338,43 +453,43 @@
 }
 
 .weight-tooltip {
-  animation: fadeIn 0.15s ease;
-  transition: opacity 0.15s ease-out;
+  animation: fadeIn $fade-animation-duration $fade-animation-timing;
+  transition: opacity $fade-animation-duration ease-out;
 
   &.fade-out {
-    animation: fadeOut 0.15s ease forwards;
+    animation: fadeOut $fade-animation-duration $fade-animation-timing forwards;
   }
 }
 
 // Responsive design
-@media (max-width: 768px) {
+@media (max-width: $mobile-breakpoint) {
   .visualizer-container {
-    padding: 15px;
+    padding: $mobile-padding;
   }
 
   .token-text {
-    font-size: 12px;
+    font-size: $mobile-token-font;
   }
 
   .legend {
-    font-size: 12px;
+    font-size: $mobile-legend-font;
   }
 
   .visualizer-controls {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: $mobile-controls-gap;
   }
 }
 
 // High contrast mode support
 @media (prefers-contrast: high) {
   .token-background {
-    stroke-width: 2;
+    stroke-width: $high-contrast-stroke-width;
   }
 
   .attention-path {
-    stroke-width: 2px !important;
+    stroke-width: $high-contrast-path-width !important;
     opacity: 1 !important;
   }
 }
