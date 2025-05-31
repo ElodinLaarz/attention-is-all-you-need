@@ -1,4 +1,4 @@
-# Attention Is All You Need
+# 🧠 Attention Is All You Need
 
 Visualization of the Attention Mechanism from
 [Attention Is All You Need](https://arxiv.org/abs/1706.03762) paper.
@@ -8,27 +8,27 @@ It consists of a Flask backend that uses the Hugging Face Transformers library t
 predictions and extract attention matrices, and an Angular frontend that visualizes the attention
 patterns.
 
-## Project Structure
+## 📁 Project Structure
 
 - **Backend**: Python Flask application that serves the transformer model API
 - **Frontend**: Angular application that provides the user interface for visualizing attention
 
-## Installation and Setup
+## ⚙️ Installation and Setup
 
-### Prerequisites
+### 📋 Prerequisites
 
 - Python 3.13+
 - Node.js 18+ and npm
 - Git
 
-### Clone the Repository
+### 📥 Clone the Repository
 
 ```bash
 git clone https://github.com/ElodinLaarz/attention-is-all-you-need
 cd attention-is-all-you-need
 ```
 
-### Root Project Setup
+### 🎯 Root Project Setup
 
 1. **Install root project dependencies**:
 
@@ -38,7 +38,7 @@ npm install
 
 This installs development tools like Prettier, ESLint, and Husky for Git hooks.
 
-### Backend Setup
+### 🐍 Backend Setup
 
 1. **Create and activate the Conda environment**:
 
@@ -71,7 +71,7 @@ python app.py
 
 The backend server will run on http://127.0.0.1:5000 by default.
 
-### Frontend Setup
+### 🅰️ Frontend Setup
 
 1. **Install frontend dependencies**:
 
@@ -93,7 +93,7 @@ npm start
 
 The frontend application will be available at http://localhost:4200 by default.
 
-### Running Both Services
+### 🚀 Running Both Services
 
 You can start both the backend and frontend simultaneously using:
 
@@ -102,11 +102,11 @@ You can start both the backend and frontend simultaneously using:
 npm start
 ```
 
-## Connecting Frontend to Backend
+## 🔌 Connecting Frontend to Backend
 
 The frontend is pre-configured to connect to the backend at http://127.0.0.1:5000. This
 configuration is set in the `ApiService` class located at
-`frontend/src/app/services/api.service.ts`.
+`frontend/src/app/services/api.service.ts`. `frontend/src/app/services/api.service.ts`.
 
 If you need to modify the backend URL (for example, if you're running the backend on a different
 port or host), update the following line in `api.service.ts`:
@@ -115,7 +115,7 @@ port or host), update the following line in `api.service.ts`:
 private readonly backendUrl: string = 'http://127.0.0.1:5000';
 ```
 
-## Usage
+## 🎮 Usage
 
 1. Start both the backend and frontend servers as described above
 2. Open your browser and navigate to http://localhost:4200
@@ -123,35 +123,35 @@ private readonly backendUrl: string = 'http://127.0.0.1:5000';
 
 The visualization will show how different tokens attend to each other in the transformer model
 
-## Features
+## ✨ Features
 
 - Text prediction using transformer models
 - Visualization of attention matrices
 - Interactive exploration of attention patterns
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
-### Backend Issues
+### 🐍 Backend Issues
 
 - If you encounter errors related to missing packages, ensure your environment is activated and all
   dependencies are installed
 - Check that the model specified in `backend/app.py` (default: gpt2) is available and can be
   downloaded
 
-### Frontend Issues
+### 🅰️ Frontend Issues
 
 - If you see connection errors, ensure the backend server is running and accessible
 - Check the browser console for detailed error messages
 - Verify that the backend URL in `api.service.ts` matches your backend server configuration
 
-### CORS Issues
+### 🌐 CORS Issues
 
 - The backend has CORS enabled for all origins. If you're experiencing CORS issues, ensure that the
   Flask-CORS package is installed and properly configured in `app.py`
 
-## Development Workflow
+## 🛠️ Development Workflow
 
-### Code Formatting
+### 🎨 Code Formatting
 
 This project uses pre-commit hooks to ensure consistent code formatting:
 
@@ -207,7 +207,7 @@ npm run pre-commit
 pre-commit run --all-files
 ```
 
-### Running the Application
+### 🚀 Running the Application
 
 You can start both the backend and frontend from the root directory:
 
@@ -232,6 +232,6 @@ npm run frontend:build
 npm run frontend:test
 ```
 
-## License
+## 📄 License
 
 See the [LICENSE](LICENSE) file for details.
