@@ -1,42 +1,42 @@
-// Theme
-$primary-color: #059669; // Emerald green
-$secondary-color: #0d9488; // Teal
-$accent-color: #06b6d4; // Cyan
+// Theme - Modernized Blue-Purple Palette
+$primary-color: #4f46e5; // Indigo
+$secondary-color: #6366f1; // Lighter indigo
+$accent-color: #8b5cf6; // Purple
 
-$error-color: #dc2626; // Deep red
-$success-color: #059669; // Emerald (same as primary)
-$warning-color: #d97706; // Orange
+$error-color: #ef4444; // Red
+$success-color: #10b981; // Green
+$warning-color: #f59e0b; // Amber
 
-$text-primary: #064e3b; // Dark green
-$text-secondary: #047857; // Medium green
-$text-muted: #6b7280; // Neutral gray
+$text-primary: #1e293b; // Slate 800
+$text-secondary: #334155; // Slate 700
+$text-muted: #64748b; // Slate 500
 
-$background-primary: #ffffff; // Pure white
-$background-secondary: #f0fdf4; // Very light green
-$background-tertiary: #ecfdf5; // Light mint
+$background-primary: #ffffff; // White
+$background-secondary: #f8fafc; // Slate 50
+$background-tertiary: #f1f5f9; // Slate 100
 
-$border-light: #d1fae5; // Light green border
-$border-medium: #a7f3d0; // Medium green border
+$border-light: #e2e8f0; // Slate 200
+$border-medium: #cbd5e1; // Slate 300
 
-// Attention visualization colors (green-based)
-$attention-bg-high: rgba(5, 150, 105, 0.15); // Light emerald
-$attention-text-high: #064e3b; // Dark emerald
-$attention-bg-medium: rgba(13, 148, 136, 0.12); // Light teal
-$attention-text-medium: #0f5132; // Dark teal
-$attention-bg-low: rgba(156, 163, 175, 0.08); // Light gray
-$attention-text-low: #6b7280; // Medium gray
+// Attention visualization colors (blue-purple based)
+$attention-bg-high: rgba(79, 70, 229, 0.15); // Light indigo
+$attention-text-high: #4338ca; // Indigo 700
+$attention-bg-medium: rgba(139, 92, 246, 0.12); // Light purple
+$attention-text-medium: #7e22ce; // Purple 700
+$attention-bg-low: rgba(226, 232, 240, 0.5); // Light slate
+$attention-text-low: #475569; // Slate 600
 
 // Gradients
 $gradient-primary: linear-gradient(
   135deg,
-  #f0fdf4 0%,
-  #ecfdf5 50%,
-  #f0fdfa 100%
+  #f8fafc 0%,
+  #f1f5f9 50%,
+  #f8f7ff 100%
 );
 $gradient-accent: linear-gradient(
   135deg,
-  rgba(5, 150, 105, 0.1) 0%,
-  rgba(13, 148, 136, 0.1) 100%
+  rgba(79, 70, 229, 0.08) 0%,
+  rgba(139, 92, 246, 0.08) 100%
 );
 
 // Dark Mode Colors
@@ -51,18 +51,12 @@ $dark-text-muted: #94a3b8; // Slate 400
 $dark-border-light: #475569; // Slate 600
 $dark-border-medium: #64748b; // Slate 500
 
-// Gradients
-$gradient-primary: linear-gradient(
-  135deg,
-  #eff6ff 0%,
-  #f0f9ff 50%,
-  #faf5ff 100%
-);
-$gradient-accent: linear-gradient(
-  135deg,
-  rgba(59, 130, 246, 0.1) 0%,
-  rgba(139, 92, 246, 0.1) 100%
-);
+$dark-attention-bg-high: rgba(99, 102, 241, 0.3); // Dark mode indigo
+$dark-attention-text-high: #a5b4fc; // Indigo 300
+$dark-attention-bg-medium: rgba(167, 139, 250, 0.25); // Dark mode purple
+$dark-attention-text-medium: #c4b5fd; // Purple 300
+$dark-attention-bg-low: rgba(71, 85, 105, 0.3); // Dark mode slate
+$dark-attention-text-low: #cbd5e1; // Slate 300
 
 $shadow-light:
   0 1px 3px rgba(0, 0, 0, 0.1),
@@ -120,7 +114,7 @@ $spacing-xl: 32px;
     font-size: 2.25rem;
     margin-bottom: $spacing-xl;
     text-align: center;
-    background: linear-gradient(135deg, $primary-color, $secondary-color);
+    background: linear-gradient(135deg, $primary-color, $accent-color);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -138,19 +132,78 @@ $spacing-xl: 32px;
       width: 100%;
     }
 
-    .ghost-prediction {
-      display: inline-block; // Or block, depending on desired flow
-      margin-left: 5px; // Space it slightly from the textarea
-      color: #9e9e9e; // Grey color for ghost text
-      font-style: italic;
-      // If textarea and ghost text are on the same line, ensure vertical alignment
-      // vertical-align: top; // If mat-form-field and span are display: inline-block or similar
+    .prediction-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: rgba($background-secondary, 0.6);
+      border-radius: $border-radius;
+      border: 1px solid $border-light;
+      box-shadow: $shadow-light;
+      min-height: 50px;
+      @include smooth-transition();
+      animation: fadeIn 0.3s ease-in-out;
+
+      .ghost-prediction {
+        display: inline-block;
+        font-size: 1rem;
+        color: $text-muted;
+        font-style: italic;
+        margin-right: 10px;
+        padding: 4px 8px;
+        background: rgba($background-primary, 0.7);
+        border-radius: 4px;
+        border: 1px dashed $border-medium;
+      }
+
+      .prediction-actions {
+        display: flex;
+        gap: 8px;
+
+        .add-token-btn,
+        .autocomplete-btn {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 12px;
+          border-radius: 6px;
+          font-weight: 500;
+          color: $text-primary;
+          background: $background-primary;
+          border: 1px solid $border-medium;
+          @include smooth-transition();
+
+          &:hover:not(:disabled) {
+            background: rgba($primary-color, 0.1);
+            border-color: rgba($primary-color, 0.3);
+            transform: translateY(-1px);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+
+        .autocomplete-btn {
+          &.active {
+            background: rgba($primary-color, 0.15);
+            border-color: rgba($primary-color, 0.4);
+            color: $primary-color;
+          }
+        }
+      }
     }
+
     .predicting-hint {
-      display: block; // Ensure hint takes its own line or position as needed
+      display: block;
       text-align: right;
       font-size: 0.85em;
-      color: #757575;
+      color: $text-muted;
+      margin-top: 5px;
+      font-style: italic;
     }
   }
 
@@ -167,7 +220,7 @@ $spacing-xl: 32px;
       box-shadow: $shadow-medium;
       @include smooth-transition();
       @include focus-ring;
-      background: linear-gradient(135deg, $primary-color, $secondary-color);
+      background: linear-gradient(135deg, $primary-color, $accent-color);
       color: white;
       border: none;
 
@@ -308,83 +361,77 @@ $spacing-xl: 32px;
 
   .matrix-row {
     display: flex;
-    align-items: stretch;
-    margin-bottom: 1px;
-    min-height: 36px;
+    border-bottom: 1px solid #e5e7eb;
 
     &:last-child {
-      margin-bottom: 0;
+      border-bottom: none;
     }
 
     &:hover {
-      .token-label,
-      .attention-score {
-        border-color: $primary-color;
+      background-color: rgba(243, 244, 246, 0.5);
+    }
+
+    .token-label {
+      min-width: 100px;
+      padding: 8px 12px;
+      font-weight: 500;
+      text-align: right;
+      border-right: 1px solid #e5e7eb;
+      font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", monospace;
+      font-size: 13px;
+      color: #1f2937;
+      background: #f9fafb;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &.token-hovered {
+        background-color: #dbeafe;
+        color: #1e40af;
+      }
+
+      &.token-locked {
+        background-color: #e0e7ff;
+        color: #4338ca;
+        font-weight: 600;
       }
     }
-  }
 
-  .token-label {
-    @include mono-text;
-    font-weight: 600;
-    font-size: 12px;
-    color: $text-primary;
-    background: $background-secondary;
-    padding: $spacing-sm $spacing-md;
-    border-radius: 6px 0 0 6px;
-    border: 1px solid $border-light;
-    border-right: none;
-    width: 140px;
-    flex-shrink: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    @include smooth-transition();
-  }
+    .attention-score {
+      min-width: 80px;
+      padding: 8px 10px;
+      text-align: center;
+      border-right: 1px solid #e5e7eb;
+      font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", monospace;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
 
-  .attention-score {
-    @include mono-text;
-    font-size: 11px;
-    padding: $spacing-sm;
-    min-width: 70px;
-    text-align: center;
-    background: $background-primary;
-    border: 1px solid $border-light;
-    border-left: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    @include smooth-transition(0.2s);
-    cursor: pointer;
+      &:last-child {
+        border-right: none;
+      }
 
-    &:hover {
-      transform: scale(1.1);
-      z-index: 2;
-      position: relative;
-      box-shadow: $shadow-medium;
-      border-color: $primary-color;
-    }
+      &[data-attention="high"] {
+        background-color: rgba(79, 70, 229, 0.1);
+        color: #4338ca;
+        font-weight: 500;
+      }
 
-    &[data-attention="high"] {
-      background: $attention-bg-high;
-      color: $attention-text-high;
-      font-weight: 700;
-      border-color: rgba($attention-text-high, 0.3);
-    }
+      &[data-attention="medium"] {
+        background-color: rgba(79, 70, 229, 0.05);
+        color: #4f46e5;
+      }
 
-    &[data-attention="medium"] {
-      background: $attention-bg-medium;
-      color: $attention-text-medium;
-      font-weight: 600;
-      border-color: rgba($attention-text-medium, 0.3);
-    }
+      &.score-hovered {
+        background-color: rgba(59, 130, 246, 0.15);
+      }
 
-    &[data-attention="low"] {
-      background: $attention-bg-low;
-      color: $attention-text-low;
-      font-weight: 400;
+      &.score-locked {
+        background-color: rgba(99, 102, 241, 0.2);
+        font-weight: 500;
+      }
     }
   }
 
@@ -422,104 +469,365 @@ $spacing-xl: 32px;
       padding: 4px 2px;
     }
   }
-}
 
-// Enhanced animations
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
+  // Responsive adjustments for matrix display
+  @media (max-width: 768px) {
+    .attention-matrix-container {
+      .matrix-controls {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .matrix-pagination {
+          margin-top: 10px;
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+
+      .attention-matrix {
+        .matrix-header {
+          .corner-spacer {
+            min-width: 80px;
+            padding: 6px 8px;
+          }
+
+          .column-token {
+            min-width: 60px;
+            padding: 6px 8px;
+            font-size: 11px;
+          }
+        }
+
+        .matrix-row {
+          .token-label {
+            min-width: 80px;
+            padding: 6px 8px;
+            font-size: 11px;
+          }
+
+          .attention-score {
+            min-width: 60px;
+            padding: 6px 8px;
+            font-size: 11px;
+          }
+        }
+      }
+    }
   }
-  50% {
-    opacity: 0.6;
+
+  // Visualization controls
+  .visualization-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 10px 15px;
+    background: #f3f4f6;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    min-height: 60px; /* Set minimum height to prevent layout shifts */
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .control-label {
+        font-size: 14px;
+        color: #4b5563;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        user-select: none;
+
+        input[type="checkbox"] {
+          width: 16px;
+          height: 16px;
+          cursor: pointer;
+          accent-color: #4f46e5;
+        }
+      }
+
+      select {
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: 1px solid #d1d5db;
+        background-color: white;
+        color: #4b5563;
+        font-size: 14px;
+        cursor: pointer;
+
+        &:focus {
+          outline: none;
+          border-color: #4f46e5;
+          box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+      }
+    }
+
+    .control-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 5px;
+      line-height: 1.4;
+      flex-basis: 100%;
+    }
   }
-}
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  // Enhanced animations
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-}
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateX(0);
+
+  .prediction-section {
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
-}
 
-.prediction-section {
-  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  .attention-section {
+    animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-.attention-section {
-  animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  // Animation for token hover
+  .token-label.token-hovered {
+    animation: pulse 1.5s infinite ease-in-out;
+  }
 
-// Dark mode with the new colors
-@media (prefers-color-scheme: dark) {
-  .text-analyzer {
-    background: linear-gradient(
-      135deg,
-      $dark-background-primary 0%,
-      $dark-background-secondary 100%
-    );
-    color: $dark-text-primary;
+  // Animation for score hover
+  .score-hovered {
+    animation: pulse 1.5s infinite ease-in-out;
+  }
 
-    h2 {
-      color: $dark-text-primary;
+  // Dark mode with the new colors
+  @media (prefers-color-scheme: dark) {
+    .text-analyzer {
       background: linear-gradient(
         135deg,
-        lighten($primary-color, 10%),
-        lighten($secondary-color, 10%)
+        $dark-background-primary 0%,
+        $dark-background-secondary 100%
       );
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    h3,
-    h4 {
       color: $dark-text-primary;
+
+      h2 {
+        color: $dark-text-primary;
+        background: linear-gradient(
+          135deg,
+          lighten($primary-color, 10%),
+          lighten($accent-color, 10%)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      h3,
+      h4 {
+        color: $dark-text-primary;
+      }
+
+      .prediction-section {
+        background: linear-gradient(
+          135deg,
+          rgba(lighten($primary-color, 5%), 0.15) 0%,
+          rgba(lighten($secondary-color, 5%), 0.15) 100%
+        );
+        border-left-color: lighten($accent-color, 10%);
+      }
+
+      .attention-section {
+        background: $dark-background-secondary;
+        border-color: $dark-border-light;
+      }
+
+      .tokens-display {
+        background: $dark-background-tertiary;
+        border-color: $dark-border-light;
+      }
+
+      .token-label {
+        background: $dark-background-tertiary;
+        color: $dark-text-primary;
+        border-color: $dark-border-light;
+      }
+
+      .attention-score {
+        background: $dark-background-secondary;
+        border-color: $dark-border-light;
+
+        &[data-attention="high"] {
+          background: $dark-attention-bg-high;
+          color: $dark-attention-text-high;
+          border-color: rgba($dark-attention-text-high, 0.3);
+        }
+
+        &[data-attention="medium"] {
+          background: $dark-attention-bg-medium;
+          color: $dark-attention-text-medium;
+          border-color: rgba($dark-attention-text-medium, 0.3);
+        }
+
+        &[data-attention="low"] {
+          background: $dark-attention-bg-low;
+          color: $dark-attention-text-low;
+        }
+      }
+    }
+  }
+
+  // Matrix display container and controls
+  .attention-matrix-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+
+    .matrix-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      background: #f3f4f6;
+      padding: 10px 15px;
+      border-radius: 6px;
+      transition: height 0.3s ease;
+      min-height: 50px; /* Prevent layout shifts */
+
+      .control-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .control-label {
+          font-size: 14px;
+          color: #4b5563;
+        }
+
+        select {
+          padding: 4px 8px;
+          border-radius: 4px;
+          border: 1px solid #d1d5db;
+          background-color: white;
+          color: #4b5563;
+          font-size: 14px;
+        }
+      }
+
+      .matrix-pagination {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 32px; // Maintain consistent height
+        min-width: 200px; // Ensure it takes up consistent space
+
+        .pagination-btn {
+          background: white;
+          border: 1px solid #d1d5db;
+          border-radius: 4px;
+          padding: 4px 10px;
+          font-size: 14px;
+          cursor: pointer;
+          color: #4f46e5;
+
+          &:hover:not(:disabled) {
+            background: #f8fafc;
+            border-color: #4f46e5;
+          }
+
+          &:disabled {
+            opacity: 0.5;
+            cursor: default;
+          }
+        }
+
+        .page-indicator {
+          font-size: 14px;
+          color: #6b7280;
+        }
+      }
     }
 
-    .prediction-section {
-      background: linear-gradient(
-        135deg,
-        rgba(lighten($primary-color, 5%), 0.15) 0%,
-        rgba(lighten($secondary-color, 5%), 0.15) 100%
-      );
-      border-left-color: lighten($accent-color, 10%);
+    .matrix-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 5px;
     }
+  }
 
-    .attention-section {
-      background: $dark-background-secondary;
-      border-color: $dark-border-light;
-    }
+  // Matrix header with column tokens
+  .attention-matrix {
+    overflow-x: auto;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: white;
 
-    .tokens-display {
-      background: $dark-background-tertiary;
-      border-color: $dark-border-light;
-    }
+    .matrix-header {
+      display: flex;
+      border-bottom: 2px solid #e5e7eb;
+      background: #f9fafb;
+      position: sticky;
+      top: 0;
 
-    .token-label {
-      background: $dark-background-tertiary;
-      color: $dark-text-primary;
-      border-color: $dark-border-light;
-    }
+      .corner-spacer {
+        min-width: 100px;
+        padding: 8px 12px;
+        font-weight: 600;
+        color: #4b5563;
+        text-align: right;
+        border-right: 1px solid #e5e7eb;
+      }
 
-    .attention-score {
-      background: $dark-background-secondary;
-      border-color: $dark-border-light;
+      .column-token {
+        min-width: 80px;
+        padding: 8px 10px;
+        text-align: center;
+        font-weight: 500;
+        border-right: 1px solid #e5e7eb;
+        font-family:
+          "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", monospace;
+        font-size: 13px;
+        color: #1f2937;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover,
+        &.token-hovered {
+          background: #dbeafe;
+          color: #1e40af;
+        }
+
+        &.token-locked {
+          background: #e0e7ff;
+          color: #4338ca;
+          font-weight: 600;
+        }
+      }
     }
   }
 }

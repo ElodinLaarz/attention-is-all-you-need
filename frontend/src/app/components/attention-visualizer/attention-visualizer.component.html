@@ -1,0 +1,152 @@
+<div class="visualizer-container">
+  <svg
+    #attentionSvg
+    [attr.width]="svgWidth"
+    [attr.height]="svgHeight"
+    class="attention-svg"
+  >
+    <!-- Attention curves (drawn first so they appear behind tokens) -->
+    <g class="attention-paths-group">
+      <path
+        *ngFor="let pathData of attentionPaths"
+        [attr.d]="pathData.path"
+        [ngClass]="getPathClasses(pathData.isHighlighted)"
+        [style.stroke]="getStrokeColor(pathData.isHighlighted)"
+        [style.stroke-width]="getMaxValue(pathData.score * 8, 0.5)"
+        [style.opacity]="getMaxValue(pathData.score * 0.8 + 0.2, 0.3)"
+        fill="none"
+        stroke-linecap="round"
+      ></path>
+    </g>
+
+    <!-- Optional: Row divider lines -->
+    <g class="row-dividers" *ngIf="numRows > 1 && wrapLines">
+      <line
+        *ngFor="let i of getRowDividers()"
+        [attr.x1]="20"
+        [attr.y1]="tokenYBase + i * rowHeight - rowHeight / 2"
+        [attr.x2]="svgWidth - 20"
+        [attr.y2]="tokenYBase + i * rowHeight - rowHeight / 2"
+        stroke="#e2e8f0"
+        stroke-width="1"
+        stroke-dasharray="4,4"
+      />
+    </g>
+
+    <!-- Token backgrounds -->
+    <g class="token-backgrounds-group">
+      <rect
+        *ngFor="let pos of tokenPositions; let i = index"
+        [attr.x]="pos.x - pos.width / 2"
+        [attr.y]="pos.y - 20"
+        [attr.width]="pos.width"
+        [attr.height]="30"
+        [ngClass]="
+          'token-background' +
+          (hoveredTokenIndex === i ? ' hovered' : '') +
+          (lockedTokenIndex === i ? ' locked' : '')
+        "
+        rx="4"
+        (mouseenter)="onTokenHover(i)"
+        (mouseleave)="onTokenHover(null)"
+        (click)="onTokenClick(i)"
+      ></rect>
+    </g>
+
+    <!-- Token text -->
+    <g class="token-text-group">
+      <text
+        *ngFor="let pos of tokenPositions; let i = index"
+        [attr.x]="pos.x"
+        [attr.y]="pos.y - 5"
+        text-anchor="middle"
+        [ngClass]="
+          'token-text' +
+          (hoveredTokenIndex === i ? ' hovered' : '') +
+          (lockedTokenIndex === i ? ' locked' : '')
+        "
+        (mouseenter)="onTokenHover(i)"
+        (mouseleave)="onTokenHover(null)"
+        (click)="onTokenClick(i)"
+      >
+        {{ pos.text }}
+      </text>
+    </g>
+
+    <!-- Row indicators -->
+    <g class="row-indicators" *ngIf="numRows > 1 && wrapLines">
+      <text
+        *ngFor="let i of getRowNumbers()"
+        [attr.x]="20"
+        [attr.y]="tokenYBase + i * rowHeight - 45"
+        class="row-label"
+      >
+        Row {{ i + 1 }}
+      </text>
+    </g>
+
+    <!-- Optional: Add arrows to show direction -->
+    <defs>
+      <marker
+        id="arrowhead"
+        markerWidth="10"
+        markerHeight="7"
+        refX="9"
+        refY="3.5"
+        orient="auto"
+      >
+        <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" opacity="0.7" />
+      </marker>
+      <marker
+        id="arrowhead-gray"
+        markerWidth="10"
+        markerHeight="7"
+        refX="9"
+        refY="3.5"
+        orient="auto"
+      >
+        <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280" opacity="0.5" />
+      </marker>
+    </defs>
+  </svg>
+
+  <!-- Legend - Always present but content changes -->
+  <div class="legend">
+    <ng-container *ngIf="hoveredTokenIndex !== null">
+      <div class="legend-item">
+        <div class="legend-color outgoing"></div>
+        <span>Attention from "{{ tokens[hoveredTokenIndex] }}"</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color incoming"></div>
+        <span>Attention to "{{ tokens[hoveredTokenIndex] }}"</span>
+      </div>
+      <div class="legend-status" *ngIf="lockedTokenIndex !== null">
+        <small
+          ><strong>Token "{{ tokens[lockedTokenIndex] }}" is locked.</strong>
+          Click again to unlock.</small
+        >
+      </div>
+    </ng-container>
+
+    <div class="legend-placeholder" *ngIf="hoveredTokenIndex === null">
+      <div class="placeholder-text">
+        Hover over a token to see attention details
+      </div>
+    </div>
+
+    <div class="legend-note">
+      <small
+        >* Showing top 5 strongest attention connections. Line thickness
+        represents attention strength.</small
+      >
+    </div>
+
+    <div class="legend-layout" *ngIf="numRows > 1 && wrapLines">
+      <small
+        >Tokens displayed across {{ numRows }} rows with
+        {{ maxTokensPerLine }} tokens per row.</small
+      >
+    </div>
+  </div>
+</div>

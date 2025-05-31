@@ -7,7 +7,8 @@ import { TextAnalyzerComponent } from './components/text-analyzer/text-analyzer.
   imports: [RouterOutlet, TextAnalyzerComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
+  standalone: true,
 })
 export class App {
-  protected title = 'frontend';
+  protected title: string = 'frontend';
 }

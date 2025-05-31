@@ -6,44 +6,70 @@
       <mat-label>Enter text</mat-label>
       <textarea
         matInput
-        #inputArea
         cdkTextareaAutosize
         #autosize="cdkTextareaAutosize"
         cdkAutosizeMinRows="3"
         cdkAutosizeMaxRows="10"
         [formControl]="inputControl"
         (input)="onInputChange($event)"
-        placeholder="Type something..."
-      ></textarea>
+        placeholder="Type something... the prediction will update automatically"
+      >
+      </textarea>
     </mat-form-field>
-    <span
-      class="ghost-prediction"
+    <div
+      class="prediction-controls"
       *ngIf="
         predictedWord && !isLoadingPrediction && inputControl.value?.trim()
       "
     >
-      {{ predictedWord }}
-    </span>
-    <mat-hint
-      *ngIf="isLoadingPrediction && !errorMessage"
-      class="predicting-hint"
-      >Predicting...</mat-hint
-    >
+      <span class="ghost-prediction">
+        {{ predictedWord }}
+      </span>
+      <div class="prediction-actions">
+        <button
+          mat-button
+          class="add-token-btn"
+          (click)="addPredictedToken()"
+          [disabled]="isAddingTokens || !predictedWord"
+        >
+          <mat-icon *ngIf="!isAddingTokens">add</mat-icon>
+          <mat-spinner *ngIf="isAddingTokens" diameter="16"></mat-spinner>
+          Add Token
+        </button>
+        <button
+          mat-button
+          class="autocomplete-btn"
+          (click)="toggleAutocomplete()"
+          [disabled]="!predictedWord"
+          [class.active]="isAutocompleting"
+        >
+          <mat-icon>{{ isAutocompleting ? "stop" : "play_arrow" }}</mat-icon>
+          {{ isAutocompleting ? "Stop" : "Autocomplete" }}
+        </button>
+      </div>
+    </div>
+    <div *ngIf="isLoadingPrediction && !errorMessage" class="predicting-hint">
+      Predicting...
+    </div>
   </div>
+
   <div class="button-section">
     <button
       mat-raised-button
-      color="primary"
       (click)="analyzeTextAttention()"
       [disabled]="isLoadingAttention || !inputControl.value?.trim()"
     >
       <mat-spinner
         *ngIf="isLoadingAttention"
         diameter="20"
-        style="display: inline-block; margin-right: 8px"
+        style="display: inline-block; margin-right: 8px; vertical-align: middle"
       ></mat-spinner>
       {{ isLoadingAttention ? "Analyzing..." : "Analyze Attention" }}
     </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-section">
+    <p>Error: {{ errorMessage }}</p>
   </div>
 
   <div
@@ -55,5 +81,171 @@
     <p>
       <strong>{{ predictedWord }}</strong>
     </p>
+  </div>
+
+  <div
+    class="attention-section"
+    *ngIf="attentionTokens.length > 0 && !isLoadingAttention && !errorMessage"
+  >
+    <h3>Attention Analysis:</h3>
+
+    <!-- Visualization Controls -->
+    <div class="visualization-controls">
+      <div class="control-group">
+        <label class="control-label">
+          <input
+            type="checkbox"
+            [checked]="wrapLongTexts"
+            (change)="wrapLongTexts = !wrapLongTexts"
+          />
+          Wrap long text
+        </label>
+      </div>
+      <div class="control-group">
+        <label class="control-label">Tokens per line:</label>
+        <select (change)="onTokensPerLineChange($event)">
+          <option [selected]="maxTokensPerLine === 5" value="5">5</option>
+          <option [selected]="maxTokensPerLine === 8" value="8">8</option>
+          <option [selected]="maxTokensPerLine === 10" value="10">10</option>
+          <option [selected]="maxTokensPerLine === 15" value="15">15</option>
+          <option [selected]="maxTokensPerLine === 20" value="20">20</option>
+        </select>
+      </div>
+      <div class="control-note">
+        <small>Adjust settings for better visualization of long text</small>
+      </div>
+    </div>
+
+    <app-attention-visualizer
+      [tokens]="attentionTokens"
+      [attentionMatrix]="attentionMatrix"
+      [hoveredTokenIndex]="hoveredTokenIndex"
+      [lockedTokenIndex]="lockedTokenIndex"
+      [maxTokensPerLine]="maxTokensPerLine"
+      [wrapLines]="wrapLongTexts"
+      (tokenLockChange)="onTokenLockChange($event)"
+    >
+    </app-attention-visualizer>
+
+    <details class="raw-matrix-details">
+      <summary>View Raw Attention Matrix</summary>
+      <div class="attention-matrix-container">
+        <!-- Matrix Controls -->
+        <div class="matrix-controls">
+          <div class="control-group">
+            <label class="control-label">Columns per page:</label>
+            <select (change)="onMatrixColumnsChange($event)">
+              <option [selected]="matrixColumnsPerPage === 5" value="5">
+                5
+              </option>
+              <option [selected]="matrixColumnsPerPage === 8" value="8">
+                8
+              </option>
+              <option [selected]="matrixColumnsPerPage === 10" value="10">
+                10
+              </option>
+              <option [selected]="matrixColumnsPerPage === 15" value="15">
+                15
+              </option>
+              <option [selected]="matrixColumnsPerPage === 20" value="20">
+                20
+              </option>
+            </select>
+          </div>
+          <!-- Page Navigation container (always present, content conditionally shown) -->
+          <div class="matrix-pagination">
+            <ng-container *ngIf="matrixPageCount > 1">
+              <button
+                class="pagination-btn"
+                [disabled]="currentMatrixPage === 0"
+                (click)="changeMatrixPage(-1)"
+              >
+                ←
+              </button>
+              <span class="page-indicator"
+                >Page {{ currentMatrixPage + 1 }} of {{ matrixPageCount }}</span
+              >
+              <button
+                class="pagination-btn"
+                [disabled]="currentMatrixPage === matrixPageCount - 1"
+                (click)="changeMatrixPage(1)"
+              >
+                →
+              </button>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="attention-matrix">
+          <!-- Column Headers (Tokens) -->
+          <div class="matrix-header">
+            <span class="corner-spacer"></span>
+            <span
+              *ngFor="let token of getVisibleColumnTokens(); let j = index"
+              class="column-token"
+              [class.token-hovered]="
+                hoveredTokenIndex === getAbsoluteColumnIndex(j)
+              "
+              [class.token-locked]="
+                lockedTokenIndex === getAbsoluteColumnIndex(j)
+              "
+              (mouseenter)="onTokenHover(getAbsoluteColumnIndex(j))"
+              (mouseleave)="onTokenHover(null)"
+              (click)="onTokenClick(getAbsoluteColumnIndex(j))"
+            >
+              {{ token }}
+            </span>
+          </div>
+
+          <!-- Matrix Rows -->
+          <div
+            *ngFor="let row of attentionMatrix; let i = index"
+            class="matrix-row"
+            (mouseenter)="onTokenHover(i)"
+            (mouseleave)="onTokenHover(null)"
+            (click)="onTokenClick(i)"
+          >
+            <span
+              class="token-label"
+              [class.token-hovered]="hoveredTokenIndex === i"
+              [class.token-locked]="lockedTokenIndex === i"
+            >
+              {{ attentionTokens[i] }}
+            </span>
+            <span
+              *ngFor="let j of getVisibleColumnIndices()"
+              class="attention-score"
+              [class.score-hovered]="
+                hoveredTokenIndex === i || hoveredTokenIndex === j
+              "
+              [class.score-locked]="
+                lockedTokenIndex === i || lockedTokenIndex === j
+              "
+              [attr.data-attention]="getAttentionLevel(row[j])"
+              [title]="
+                'Attention from ' +
+                attentionTokens[i] +
+                ' to ' +
+                attentionTokens[j] +
+                ': ' +
+                (row[j] | number: '1.4-4')
+              "
+              (mouseenter)="onTokenHover(j)"
+              (mouseleave)="onTokenHover(null)"
+              (click)="onTokenClick(j)"
+            >
+              {{ row[j] | number: "1.2-4" }}
+            </span>
+          </div>
+        </div>
+
+        <div class="matrix-note">
+          <small
+            >Displaying {{ matrixColumnsPerPage }} columns per page. Use
+            pagination to see more columns.</small
+          >
+        </div>
+      </div>
+    </details>
   </div>
 </div>

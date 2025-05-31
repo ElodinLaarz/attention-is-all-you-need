@@ -1,0 +1,294 @@
+.visualizer-container {
+  padding: 20px;
+  background: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  transition: height 0.3s ease; // Add smooth content transitions
+
+  .attention-svg {
+    display: block;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+  }
+}
+
+// Controls for the visualizer
+.visualizer-controls {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 20px;
+
+  .toggle-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    color: #4f46e5;
+
+    input[type="checkbox"] {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #4f46e5;
+      border-radius: 3px;
+      position: relative;
+
+      &:checked {
+        background-color: #4f46e5;
+
+        &:after {
+          content: "✓";
+          color: white;
+          position: absolute;
+          top: -2px;
+          left: 3px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .token-limit-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #4b5563;
+
+    select {
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #d1d5db;
+      background-color: white;
+      color: #4f46e5;
+      font-size: 14px;
+
+      &:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+      }
+    }
+  }
+}
+
+// Row indicators
+.row-label {
+  font-size: 12px;
+  fill: #6b7280;
+  font-weight: 500;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+// Token styling
+.token-background {
+  fill: #f8fafc;
+  stroke: #e2e8f0;
+  stroke-width: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover,
+  &.hovered {
+    fill: #dbeafe;
+    stroke: #3b82f6;
+    stroke-width: 2;
+  }
+
+  &.locked {
+    fill: #e0e7ff; // Indigo 50
+    stroke: #4f46e5; // Indigo 600
+    stroke-width: 2.5;
+    stroke-dasharray: none;
+  }
+}
+
+.token-text {
+  font-family:
+    "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New",
+    monospace;
+  font-size: 14px;
+  font-weight: 500;
+  fill: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  &:hover,
+  &.hovered {
+    fill: #1e40af;
+    font-weight: 600;
+  }
+
+  &.locked {
+    fill: #4338ca; // Indigo 700
+    font-weight: 700;
+  }
+}
+
+// Attention path styling
+.attention-path {
+  transition: all 0.3s ease;
+
+  &.highlighted {
+    filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:not(.highlighted) {
+    stroke-dasharray: 2, 2;
+  }
+}
+
+// Animation for attention paths
+@keyframes attention-flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 20;
+  }
+}
+
+.attention-path.highlighted {
+  animation: attention-flow 2s linear infinite;
+  stroke-dasharray: 10, 5;
+}
+
+// Legend styling
+.legend {
+  margin-top: 15px;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100px; // Set a minimum height to prevent layout shifts
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeIn 0.2s ease;
+    transition: opacity 0.2s ease-in-out; // Ensure legend transitions are smooth
+
+    .legend-color {
+      width: 16px;
+      height: 6px;
+      border-radius: 3px;
+
+      &.outgoing {
+        background: #3b82f6; // Blue for outgoing
+        height: 8px; // Slightly thicker
+        box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+      }
+
+      &.incoming {
+        background: #6b7280; // Gray for incoming
+        border-top: 1px dashed rgba(255, 255, 255, 0.5);
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+
+  .legend-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 52px; // Match the height of two legend items
+    color: #94a3b8;
+    font-style: italic;
+    animation: fadeIn 0.2s ease;
+    transition: opacity 0.2s ease-in-out; // Ensure legend transitions are smooth
+
+    .placeholder-text {
+      opacity: 0.8;
+    }
+  }
+
+  .legend-note,
+  .legend-layout {
+    font-size: 11px;
+    color: #64748b;
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  .legend-status {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: rgba(79, 70, 229, 0.1);
+    border-radius: 4px;
+    border-left: 3px solid #4f46e5;
+    animation: fadeIn 0.2s ease;
+    transition: opacity 0.2s ease-in-out; // Ensure legend transitions are smooth
+
+    small {
+      color: #4338ca;
+      font-size: 12px;
+
+      strong {
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .visualizer-container {
+    padding: 15px;
+  }
+
+  .token-text {
+    font-size: 12px;
+  }
+
+  .legend {
+    font-size: 12px;
+  }
+
+  .visualizer-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .token-background {
+    stroke-width: 2;
+  }
+
+  .attention-path {
+    stroke-width: 2px !important;
+    opacity: 1 !important;
+  }
+}

@@ -24,18 +24,19 @@ export interface PredictionResponse {
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly backendUrl = 'http://127.0.0.1:5000';
+  private readonly backendUrl: string = 'http://127.0.0.1:5000';
 
   constructor(private readonly http: HttpClient) {}
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     console.error('API Error:', error);
 
-    const clientSideError = error.error instanceof ErrorEvent;
-    const serverErrorBody = error.error;
-    const statusCode = error.status;
+    const clientSideError: boolean = error.error instanceof ErrorEvent;
+    const serverErrorBody: any = error.error;
+    const statusCode: number = error.status;
 
-    let errorMessage = 'Something bad happened; please try again later.';
+    let errorMessage: string =
+      'Something bad happened; please try again later.';
 
     switch (true) {
       case clientSideError:
@@ -49,7 +50,9 @@ export class ApiService {
         break;
 
       case !!statusCode:
-        errorMessage = `Server returned code ${statusCode}, error message: ${error.message}`;
+        errorMessage = `Server returned code ${statusCode}, error message: ${
+          error.message
+        }`;
         break;
 
       default:
