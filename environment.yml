@@ -1,0 +1,4 @@
+name: attention
+channels:
+  - defaults
+prefix: /home/laarz/miniconda3/envs/attention
