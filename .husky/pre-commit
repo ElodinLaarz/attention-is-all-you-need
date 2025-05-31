@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged for JavaScript/CSS/MD files
+npx lint-staged
+
+# Run pre-commit for Python files and other checks
+npm run pre-commit

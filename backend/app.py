@@ -75,11 +75,10 @@ def predict_transformer() -> Response:
     )
 
     generated_text: str = tokenizer.decode(
-        output_sequences[0], 
-        skip_special_tokens=True
+        output_sequences[0], skip_special_tokens=True
     )
 
-    next_words: str = generated_text[len(input_text):].strip()
+    next_words: str = generated_text[len(input_text) :].strip()
     predicted_next_word: str = next_words.split(" ")[0] if next_words else ""
 
     return jsonify({"predicted_next_word": predicted_next_word})
@@ -108,14 +107,14 @@ def get_attention_transformer() -> Response:
     averaged_attentions = last_layer_attentions.squeeze(0).mean(dim=0)
 
     attention_matrix: list[list[float]] = averaged_attentions.tolist()
-    tokens: list[str] = [
-        tokenizer.decode([token_id]) for token_id in input_ids[0]
-    ]
+    tokens: list[str] = [tokenizer.decode([token_id]) for token_id in input_ids[0]]
 
-    return jsonify({
-        "tokens": tokens,
-        "attention_matrix": attention_matrix,
-    })
+    return jsonify(
+        {
+            "tokens": tokens,
+            "attention_matrix": attention_matrix,
+        }
+    )
 
 
 if __name__ == "__main__":

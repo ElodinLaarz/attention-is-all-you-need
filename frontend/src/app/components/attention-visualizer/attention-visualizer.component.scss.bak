@@ -5,7 +5,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
   transition: height 0.3s ease; // Add smooth content transitions
-  
+
   .attention-svg {
     display: block;
     background: white;
@@ -22,7 +22,7 @@
   align-items: center;
   margin-bottom: 10px;
   gap: 20px;
-  
+
   .toggle-wrap {
     display: flex;
     align-items: center;
@@ -31,7 +31,7 @@
     user-select: none;
     font-size: 14px;
     color: #4f46e5;
-    
+
     input[type="checkbox"] {
       appearance: none;
       width: 16px;
@@ -39,10 +39,10 @@
       border: 2px solid #4f46e5;
       border-radius: 3px;
       position: relative;
-      
+
       &:checked {
         background-color: #4f46e5;
-        
+
         &:after {
           content: '✓';
           color: white;
@@ -54,14 +54,14 @@
       }
     }
   }
-  
+
   .token-limit-control {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 14px;
     color: #4b5563;
-    
+
     select {
       padding: 4px 8px;
       border-radius: 4px;
@@ -69,7 +69,7 @@
       background-color: white;
       color: #4f46e5;
       font-size: 14px;
-      
+
       &:focus {
         outline: none;
         border-color: #4f46e5;
@@ -101,7 +101,7 @@
     stroke: #3b82f6;
     stroke-width: 2;
   }
-  
+
   &.locked {
     fill: #e0e7ff; // Indigo 50
     stroke: #4f46e5; // Indigo 600
@@ -123,7 +123,7 @@
     fill: #1e40af;
     font-weight: 600;
   }
-  
+
   &.locked {
     fill: #4338ca; // Indigo 700
     font-weight: 700;
@@ -133,13 +133,13 @@
 // Attention path styling
 .attention-path {
   transition: all 0.3s ease;
-  
+
   &.highlighted {
     filter: drop-shadow(0 0 3px rgba(59, 130, 246, 0.5));
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-  
+
   &:not(.highlighted) {
     stroke-dasharray: 2,2;
   }
@@ -172,25 +172,25 @@
   flex-direction: column;
   gap: 8px;
   min-height: 100px; // Set a minimum height to prevent layout shifts
-  
+
   .legend-item {
     display: flex;
     align-items: center;
     gap: 8px;
     animation: fadeIn 0.2s ease;
     transition: opacity 0.2s ease-in-out; // Ensure legend transitions are smooth
-    
+
     .legend-color {
       width: 16px;
       height: 6px;
       border-radius: 3px;
-      
+
       &.outgoing {
         background: #3b82f6; // Blue for outgoing
         height: 8px; // Slightly thicker
         box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
       }
-      
+
       &.incoming {
         background: #6b7280; // Gray for incoming
         border-top: 1px dashed rgba(255, 255, 255, 0.5);
@@ -198,7 +198,7 @@
       }
     }
   }
-  
+
   .legend-placeholder {
     display: flex;
     align-items: center;
@@ -208,19 +208,19 @@
     font-style: italic;
     animation: fadeIn 0.2s ease;
     transition: opacity 0.2s ease-in-out; // Ensure legend transitions are smooth
-    
+
     .placeholder-text {
       opacity: 0.8;
     }
   }
-  
+
   .legend-note, .legend-layout {
     font-size: 11px;
     color: #64748b;
     margin-top: 5px;
     line-height: 1.4;
   }
-  
+
   .legend-status {
     margin-top: 8px;
     padding: 6px 10px;
@@ -229,11 +229,11 @@
     border-left: 3px solid #4f46e5;
     animation: fadeIn 0.2s ease;
     transition: opacity 0.2s ease-in-out; // Ensure legend transitions are smooth
-    
+
     small {
       color: #4338ca;
       font-size: 12px;
-      
+
       strong {
         font-weight: 600;
       }
@@ -255,15 +255,15 @@
   .visualizer-container {
     padding: 15px;
   }
-  
+
   .token-text {
     font-size: 12px;
   }
-  
+
   .legend {
     font-size: 12px;
   }
-  
+
   .visualizer-controls {
     flex-direction: column;
     align-items: flex-start;
@@ -276,7 +276,7 @@
   .token-background {
     stroke-width: 2;
   }
-  
+
   .attention-path {
     stroke-width: 2px !important;
     opacity: 1 !important;

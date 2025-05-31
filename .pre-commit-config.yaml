@@ -9,3 +9,10 @@ repos:
   rev: 22.10.0
   hooks:
   - id: black
+- repo: https://github.com/pre-commit/mirrors-prettier
+  rev: v3.1.0
+  hooks:
+  - id: prettier
+    files: \.(md|markdown)$
+    additional_dependencies:
+      - prettier@3.5.3

@@ -1,0 +1,30 @@
+{
+  "name": "attention-is-all-you-need",
+  "version": "1.0.0",
+  "scripts": {
+    "format:md": "prettier --write \"**/*.md\"",
+    "format:js": "prettier --write \"**/*.{js,ts}\"",
+    "format:css": "prettier --write \"**/*.{css,scss}\"",
+    "format": "npm run format:md && npm run format:js && npm run format:css",
+    "pre-commit": "pre-commit run --all-files",
+    "frontend:start": "cd frontend && npm start",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:test": "cd frontend && npm test",
+    "backend:start": "cd backend && python app.py",
+    "start": "concurrently \"npm run backend:start\" \"npm run frontend:start\"",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^9.28.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.0",
+    "prettier": "^3.5.3",
+    "tslint-config-prettier": "^1.18.0"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.ts": "eslint --cache --fix",
+    "*.{js,ts,css,scss,md}": "prettier --write"
+  }
+}
