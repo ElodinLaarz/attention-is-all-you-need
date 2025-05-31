@@ -1,78 +1,84 @@
 <div class="text-analyzer">
   <h2>Text Analyzer</h2>
 
-  <div>
-    <textarea
-      [(ngModel)]="inputText"
-      rows="4"
-      cols="50"
-      placeholder="Enter text here..."
-    ></textarea>
+  <div class="input-section">
+    <mat-form-field appearance="fill">
+      <mat-label>Enter text</mat-label>
+      <textarea
+        matInput
+        cdkTextareaAutosize
+        #autosize="cdkTextareaAutosize"
+        cdkAutosizeMinRows="3"
+        cdkAutosizeMaxRows="10"
+        [formControl]="inputControl"
+        (input)="onInputChange($event)"
+        placeholder="Type something... the prediction will update automatically"
+      ></textarea>
+      <mat-hint align="end" *ngIf="isLoadingPrediction">Predicting...</mat-hint>
+    </mat-form-field>
   </div>
 
-  <div style="margin-top: 10px">
+  <div class="button-section">
     <button
-      (click)="predictNextWord()"
-      [disabled]="isLoadingPrediction || !inputText.trim()"
-    >
-      {{ isLoadingPrediction ? "Predicting..." : "Predict Next Word" }}
-    </button>
-
-    <button
+      mat-raised-button
+      color="primary"
       (click)="analyzeTextAttention()"
-      [disabled]="isLoadingAttention || !inputText.trim()"
-      style="margin-left: 10px"
+      [disabled]="isLoadingAttention || !inputControl.value?.trim()"
     >
-      {{ isLoadingAttention ? "Analyzing Attention..." : "Analyze Attention" }}
+      <mat-icon *ngIf="isLoadingAttention">
+        <mat-spinner diameter="20"></mat-spinner>
+      </mat-icon>
+      {{ isLoadingAttention ? "Analyzing..." : "Analyze Attention" }}
     </button>
   </div>
 
-  <div *ngIf="errorMessage" style="color: red; margin-top: 10px">
-    <p><strong>Error:</strong> {{ errorMessage }}</p>
+  <div *ngIf="errorMessage" class="error-section">
+    <p>Error: {{ errorMessage }}</p>
   </div>
 
-  <div *ngIf="predictedWord" style="margin-top: 20px">
+  <div *ngIf="predictedWord && !isLoadingPrediction" class="prediction-section">
     <h3>Next Word Prediction:</h3>
     <p>
       <strong>{{ predictedWord }}</strong>
     </p>
   </div>
 
-  <div *ngIf="attentionTokens.length > 0" style="margin-top: 20px">
+  <div
+    *ngIf="attentionTokens.length > 0 && !isLoadingAttention"
+    class="attention-section"
+  >
     <h3>Attention Analysis:</h3>
 
     <h4>Tokens:</h4>
-    <pre>{{ attentionTokens | json }}</pre>
-
-    <h4>Attention Matrix (Raw):</h4>
-    <p>
-      Rows: Attending From (Token Index), Columns: Attending To (Token Index)
-    </p>
-
-    <div
-      *ngFor="let row of attentionMatrix; let i = index"
-      style="display: flex; margin-bottom: 2px"
-    >
-      <span style="font-weight: bold; width: 100px; display: inline-block">
-        {{ attentionTokens[i] }}:
-      </span>
-
-      <span
-        *ngFor="let score of row; let j = index"
-        style="
-          margin-right: 5px;
-          padding: 2px;
-          border: 1px solid #eee;
-          min-width: 50px;
-          text-align: right;
-        "
-      >
-        {{ score | number: "1.2-4" }}
-      </span>
+    <div class="tokens-display">
+      <pre>{{ attentionTokens | json }}</pre>
     </div>
 
-    <pre *ngIf="attentionMatrix.length === 0">
-      {{ attentionMatrix | json }}
-    </pre>
+    <h4>Attention Matrix:</h4>
+    <div class="attention-matrix">
+      <div
+        *ngFor="let row of attentionMatrix; let i = index"
+        class="matrix-row"
+      >
+        <span class="token-label">{{ attentionTokens[i] }}</span>
+        <span
+          *ngFor="let score of row; let j = index"
+          class="attention-score"
+          [class.high-attention]="score > 0.1"
+          [class.medium-attention]="score > 0.05 && score <= 0.1"
+          [class.low-attention]="score <= 0.05"
+          [title]="
+            'Attention from ' +
+            attentionTokens[i] +
+            ' to ' +
+            attentionTokens[j] +
+            ': ' +
+            (score | number: '1.4-4')
+          "
+        >
+          {{ score | number: "1.2-4" }}
+        </span>
+      </div>
+    </div>
   </div>
 </div>
