@@ -34,6 +34,7 @@ export class AttentionVisualizerComponent implements OnChanges {
     x: number;
     y: number;
     text: string;
+    displayText: string;
     width: number;
     row: number;
   }[] = [];
@@ -59,7 +60,6 @@ export class AttentionVisualizerComponent implements OnChanges {
   public svgHeight: number = 200;
   public numRows: number = 1;
 
-  // Layout and positioning constants
   private readonly MIN_TOKEN_WIDTH: number = 60;
   private readonly TOKEN_PADDING: number = 20;
   private readonly TOKEN_Y_BASE: number = 80;
@@ -73,26 +73,22 @@ export class AttentionVisualizerComponent implements OnChanges {
   private readonly MIN_SVG_HEIGHT: number = 200;
   private readonly SVG_HEIGHT_PADDING: number = 50;
 
-  // Attention thresholds and limits
   private readonly ALL_ATTENTION_THRESHOLD: number = 0.02;
   private readonly FOCUSED_ATTENTION_THRESHOLD: number = 0.01;
   private readonly TOP_ATTENTION_LIMIT: number = 5;
   private readonly INCOMING_ATTENTION_DIMMING: number = 0.6;
 
-  // Curve and path styling constants
   private readonly CURVE_DISTANCE_FACTOR: number = 0.15;
   private readonly MAX_CURVE_HEIGHT: number = 100;
   private readonly INTER_ROW_CONTROL_OFFSET: number = 60;
   private readonly INTER_ROW_HEIGHT_OFFSET: number = 50;
   private readonly DISTANT_ROW_HEIGHT_FACTOR: number = 50;
 
-  // Tooltip configuration constants
   public readonly tooltipWidth: number = 200;
   public readonly tooltipHeight: number = 60;
   public readonly tooltipOffsetX: number = 10;
   public readonly tooltipOffsetY: number = 20;
 
-  // Timing constants
   private readonly HOVER_END_TIMEOUT: number = 50;
 
   private readonly CANVAS_FONT: string = '14px monospace';
@@ -181,7 +177,8 @@ export class AttentionVisualizerComponent implements OnChanges {
     this.tokenPositions = [];
 
     this.tokens.forEach((token, index) => {
-      const textWidth = context.measureText(token).width;
+      const displayText = this.formatTokenForDisplay(token);
+      const textWidth = context.measureText(displayText).width;
       const tokenWidth = Math.max(textWidth + this.TOKEN_PADDING, this.MIN_TOKEN_WIDTH);
 
       if (this.wrapLines && index > 0 && index % this.maxTokensPerLine === 0) {
@@ -196,6 +193,7 @@ export class AttentionVisualizerComponent implements OnChanges {
         x: currentX + tokenWidth / 2,
         y: yPosition,
         text: token,
+        displayText: displayText,
         width: tokenWidth,
         row: currentRow,
       });
@@ -314,7 +312,6 @@ export class AttentionVisualizerComponent implements OnChanges {
           isHovered: false,
           isOutgoing: false,
         });
-        console.log(`Incoming attention path created with score: ${pair.score}`);
       });
   }
 
@@ -444,6 +441,57 @@ export class AttentionVisualizerComponent implements OnChanges {
 
   formatScore(score: number): string {
     return (score * 100).toFixed(1) + '%';
+  }
+
+  formatTokenForDisplay(token: string): string {
+    if (!token) return '';
+
+    const sanitizedToken = this.sanitizeToken(token);
+    let result = '';
+
+    for (let i = 0; i < sanitizedToken.length; i++) {
+      const char = sanitizedToken[i];
+      const code = char.charCodeAt(0);
+
+      if (code === 0xfffd) {
+        result += '[?]';
+        continue;
+      }
+
+      switch (char) {
+        case '\n':
+          result += '\\n';
+          break;
+        case '\r':
+          result += '\\r';
+          break;
+        case '\t':
+          result += '\\t';
+          break;
+        case '\0':
+          result += '\\0';
+          break;
+        default:
+          if (code === 0x00a0) {
+            result += '[NBSP]';
+          } else if (code < 32 && code !== 9 && code !== 10 && code !== 13) {
+            result += '\\u' + code.toString(16).padStart(4, '0').toUpperCase();
+          } else if (code >= 127 && code <= 159) {
+            result += '\\u' + code.toString(16).padStart(4, '0').toUpperCase();
+          } else {
+            result += char;
+          }
+          break;
+      }
+    }
+
+    return result;
+  }
+
+  private sanitizeToken(token: string): string {
+    if (!token) return '';
+
+    return token.replace(/\uFFFD/g, '[?]');
   }
 
   refreshVisualization(): void {

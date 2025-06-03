@@ -20,8 +20,8 @@
         (mouseenter)="onPathHover(i)"
         (mouseleave)="onPathHoverEnd()"
         (mouseout)="onPathHoverEnd()"
-        [attr.data-from-token]="tokens[pathData.fromIndex]"
-        [attr.data-to-token]="tokens[pathData.toIndex]"
+        [attr.data-from-token]="formatTokenForDisplay(tokens[pathData.fromIndex])"
+        [attr.data-to-token]="formatTokenForDisplay(tokens[pathData.toIndex])"
         [attr.data-score]="formatScore(pathData.score)"
         pointer-events="all"
         style="vector-effect: non-scaling-stroke;"
@@ -77,7 +77,7 @@
         (mouseleave)="onTokenHover(null)"
         (click)="onTokenClick(i)"
       >
-        {{ pos.text }}
+        {{ pos.displayText }}
       </text>
     </g>
 
@@ -102,10 +102,10 @@
     >
       <div xmlns="http://www.w3.org/1999/xhtml" class="attention-weight-tooltip">
         <div>
-          <strong>From:</strong> {{ hoveredPathToToken }}
+          <strong>From:</strong> {{ formatTokenForDisplay(hoveredPathFromToken!) }}
         </div>
         <div>
-          <strong>To:</strong> {{ hoveredPathFromToken }}
+          <strong>To:</strong> {{ formatTokenForDisplay(hoveredPathToToken!) }}
         </div>
         <div>
           <strong>Score:</strong> {{ formatScore(hoveredPathScore!) }}
@@ -118,15 +118,15 @@
     <ng-container *ngIf="hoveredTokenIndex !== null">
       <div class="legend-item">
         <div class="legend-color outgoing"></div>
-        <span>Attention from "{{ tokens[hoveredTokenIndex] }}"</span>
+        <span>Attention from "{{ formatTokenForDisplay(tokens[hoveredTokenIndex]) }}"</span>
       </div>
       <div class="legend-item">
         <div class="legend-color incoming"></div>
-        <span>Attention to "{{ tokens[hoveredTokenIndex] }}"</span>
+        <span>Attention to "{{ formatTokenForDisplay(tokens[hoveredTokenIndex]) }}"</span>
       </div>
       <div class="legend-status" *ngIf="lockedTokenIndex !== null">
         <small
-          ><strong>Token "{{ tokens[lockedTokenIndex] }}" is locked.</strong>
+          ><strong>Token "{{ formatTokenForDisplay(tokens[lockedTokenIndex]) }}" is locked.</strong>
           Click again to unlock.</small
         >
       </div>
