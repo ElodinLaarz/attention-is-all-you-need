@@ -76,7 +76,6 @@ export class AttentionVisualizerComponent implements OnChanges {
   private readonly ALL_ATTENTION_THRESHOLD: number = 0.02;
   private readonly FOCUSED_ATTENTION_THRESHOLD: number = 0.01;
   private readonly TOP_ATTENTION_LIMIT: number = 5;
-  private readonly INCOMING_ATTENTION_DIMMING: number = 0.6;
 
   private readonly CURVE_DISTANCE_FACTOR: number = 0.15;
   private readonly MAX_CURVE_HEIGHT: number = 100;
@@ -305,7 +304,7 @@ export class AttentionVisualizerComponent implements OnChanges {
         const path = this.createCurvedPath(pair.fromIndex, activeTokenIndex);
         this.attentionPaths.push({
           path,
-          score: pair.score * this.INCOMING_ATTENTION_DIMMING,
+          score: pair.score,
           isHighlighted: true,
           fromIndex: pair.fromIndex,
           toIndex: activeTokenIndex,
