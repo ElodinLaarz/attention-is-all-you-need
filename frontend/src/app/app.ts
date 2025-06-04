@@ -4,7 +4,7 @@ import { TextAnalyzerComponent } from './components/text-analyzer/text-analyzer.
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TextAnalyzerComponent],
+  imports: [TextAnalyzerComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   standalone: true,

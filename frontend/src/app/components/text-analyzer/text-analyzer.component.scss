@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // Theme - Modernized Blue-Purple Palette
 $primary-color: #4f46e5; // Indigo
 $secondary-color: #6366f1; // Lighter indigo
@@ -661,8 +663,8 @@ $spacing-xl: 32px;
         color: $dark-text-primary;
         background: linear-gradient(
           135deg,
-          lighten($primary-color, 10%),
-          lighten($accent-color, 10%)
+          color.scale($primary-color, $lightness: 10%),
+          color.scale($accent-color, $lightness: 10%)
         );
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -677,10 +679,10 @@ $spacing-xl: 32px;
       .prediction-section {
         background: linear-gradient(
           135deg,
-          rgba(lighten($primary-color, 5%), 0.15) 0%,
-          rgba(lighten($secondary-color, 5%), 0.15) 100%
+          rgba(color.scale($primary-color, $lightness: 5%), 0.15) 0%,
+          rgba(color.scale($secondary-color, $lightness: 5%), 0.15) 100%
         );
-        border-left-color: lighten($accent-color, 10%);
+        border-left-color: color.scale($accent-color, $lightness: 10%);
       }
 
       .attention-section {
